@@ -1,0 +1,157 @@
+version: '3'
+
+vars:
+  BINARY_NAME: server
+  MAIN_PATH: ./cmd/server
+  LOCKBOX_SECRET: my-project-secrets  # Заменить на реальное имя секрета
+
+tasks:
+  default:
+    desc: Показать доступные команды
+    cmds:
+      - task --list
+
+  dev:
+    desc: Запуск сервера в режиме разработки
+    cmds:
+      - go run {{.MAIN_PATH}}
+    env:
+      ENV: development
+
+  build:
+    desc: Сборка бинарника
+    cmds:
+      - go build -o bin/{{.BINARY_NAME}} {{.MAIN_PATH}}
+
+  test:
+    desc: Запуск тестов
+    cmds:
+      - go test -v -race -count=1 ./...
+
+  test:coverage:
+    desc: Запуск тестов с покрытием
+    cmds:
+      - go test -v -race -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+
+  lint:
+    desc: Линтинг кода
+    cmds:
+      - golangci-lint run ./...
+
+  fmt:
+    desc: Форматирование кода
+    cmds:
+      - go fmt ./...
+
+  tidy:
+    desc: Обновление зависимостей
+    cmds:
+      - go mod tidy
+
+  clean:
+    desc: Очистка артефактов сборки
+    cmds:
+      - rm -rf bin/
+      - rm -f coverage.out coverage.html
+
+  check:
+    desc: Проверка компиляции
+    cmds:
+      - go build -o /dev/null {{.MAIN_PATH}}
+
+  deploy:
+    desc: Деплой в Yandex Cloud (stage/production)
+    cmds:
+      - chmod +x deployment/scripts/update-container.sh
+      - ./deployment/scripts/update-container.sh
+
+  kill:
+    desc: Остановка backend (освобождение портов)
+    cmds:
+      - lsof -ti:8080 | xargs kill -9 2>/dev/null || echo "Port 8080 already free"
+      - lsof -ti:44044 | xargs kill -9 2>/dev/null || echo "Port 44044 already free"
+
+  migrate:
+    desc: Запуск миграций БД (требует DATABASE_URL)
+    cmds:
+      - |
+        if [ -z "$DATABASE_URL" ]; then
+          echo "❌ DATABASE_URL не установлен"
+          echo "Использование: DATABASE_URL='postgres://...' task migrate"
+          exit 1
+        fi
+        go run ./cmd/migrate
+
+  migrate:stage:
+    desc: Миграции в stage БД (получает DATABASE_URL из Lockbox)
+    cmds:
+      - |
+        echo "🗄️  Запуск миграций в stage БД..."
+        DB_URL=$(yc lockbox payload get {{.LOCKBOX_SECRET}} --key DATABASE_URL_LOCAL 2>/dev/null | tr -d '\n')
+        if [ -z "$DB_URL" ]; then
+          echo "❌ Не удалось получить DATABASE_URL_LOCAL из Lockbox"
+          echo "   Проверьте: yc lockbox payload get {{.LOCKBOX_SECRET}} --format json"
+          exit 1
+        fi
+        DATABASE_URL="$DB_URL" go run ./cmd/migrate
+        echo "✅ Миграции завершены"
+
+  migrate:prod:
+    desc: Миграции в production БД (ОСТОРОЖНО!)
+    cmds:
+      - |
+        echo "🚨 ВНИМАНИЕ: Миграции в PRODUCTION базу!"
+        read -p "Вы уверены? (yes/no): " confirm
+        if [ "$confirm" != "yes" ]; then
+          echo "Отменено"
+          exit 1
+        fi
+        DB_URL=$(yc lockbox payload get {{.LOCKBOX_SECRET}} --key DATABASE_URL 2>/dev/null | tr -d '\n')
+        if [ -z "$DB_URL" ]; then
+          echo "❌ Не удалось получить DATABASE_URL из Lockbox"
+          exit 1
+        fi
+        DATABASE_URL="$DB_URL" go run ./cmd/migrate
+        echo "✅ Миграции завершены"
+
+  seed:
+    desc: Заполнить БД тестовыми данными (локальная)
+    cmds:
+      - go run ./cmd/seed
+    env:
+      ENV: development
+
+  seed:stage:
+    desc: Заполнить stage БД тестовыми данными (через Lockbox)
+    cmds:
+      - |
+        echo "⚠️  Seeding STAGE database..."
+        export DATABASE_URL=$(yc lockbox payload get {{.LOCKBOX_SECRET}} --key DATABASE_URL_LOCAL 2>/dev/null)
+        if [ -z "$DATABASE_URL" ]; then
+          echo "❌ Не удалось получить DATABASE_URL_LOCAL из Lockbox"
+          echo "   Проверьте: yc lockbox payload get {{.LOCKBOX_SECRET}} --format json"
+          exit 1
+        fi
+        go run ./cmd/seed
+    env:
+      ENV: stage
+
+  seed:prod:
+    desc: Заполнить production БД (ОСТОРОЖНО!)
+    cmds:
+      - |
+        echo "🚨 ВНИМАНИЕ: Вы собираетесь заполнить PRODUCTION базу!"
+        read -p "Вы уверены? (yes/no): " confirm
+        if [ "$confirm" != "yes" ]; then
+          echo "Отменено"
+          exit 1
+        fi
+        export DATABASE_URL=$(yc lockbox payload get {{.LOCKBOX_SECRET}} --key DATABASE_URL 2>/dev/null)
+        if [ -z "$DATABASE_URL" ]; then
+          echo "❌ Не удалось получить DATABASE_URL из Lockbox"
+          exit 1
+        fi
+        go run ./cmd/seed
+    env:
+      ENV: production

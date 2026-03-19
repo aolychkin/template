@@ -1,0 +1,60 @@
+# Alerting Rules для Yandex Managed Prometheus
+# Загрузить через YC Console: Monitoring → Prometheus → Alerting Rules
+
+groups:
+  - name: security-alerts
+    rules:
+      # Много неудачных попыток входа (возможный brute-force)
+      - alert: MultipleFailedLogins
+        expr: count_over_time(failed_login_attempts_total[5m]) >= 3
+        for: 1m
+        labels:
+          severity: warning
+          service: my-project
+        annotations:
+          summary: "Много неудачных попыток входа"
+          description: "Обнаружено 3+ неудачных попыток входа за 5 минут от {{ $labels.email }}"
+
+      # Аккаунт заблокирован
+      - alert: AccountLocked
+        expr: count_over_time(account_locked_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          service: my-project
+        annotations:
+          summary: "Аккаунт заблокирован"
+          description: "Аккаунт {{ $labels.email }} заблокирован из-за превышения попыток входа"
+
+      # Попытка SQL injection (КРИТИЧНО!)
+      - alert: SQLInjectionAttempt
+        expr: count_over_time(sql_injection_attempts_total[1m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          service: my-project
+        annotations:
+          summary: "Попытка SQL injection!"
+          description: "Обнаружена попытка SQL injection от IP {{ $labels.ip }}"
+
+      # Превышение rate limit
+      - alert: RateLimitExceeded
+        expr: count_over_time(rate_limit_exceeded_total[5m]) >= 10
+        for: 1m
+        labels:
+          severity: warning
+          service: my-project
+        annotations:
+          summary: "Превышение rate limit"
+          description: "10+ превышений rate limit за 5 минут от IP {{ $labels.ip }}"
+
+      # Много неудачных CSRF валидаций
+      - alert: CSRFValidationFailed
+        expr: count_over_time(csrf_validation_failed_total[10m]) >= 5
+        for: 1m
+        labels:
+          severity: warning
+          service: my-project
+        annotations:
+          summary: "Неудачные CSRF валидации"
+          description: "5+ неудачных CSRF валидаций за 10 минут"

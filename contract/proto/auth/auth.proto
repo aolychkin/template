@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "template/gen/go/auth";
+
+// AuthService сервис аутентификации
+service AuthService {
+  // Login вход в систему
+  rpc Login(LoginRequest) returns (LoginResponse);
+  
+  // Register регистрация нового пользователя
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  
+  // RefreshToken обновление токенов
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  
+  // Logout выход из системы
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  
+  // SaveRegistrationProgress сохранение прогресса регистрации
+  rpc SaveRegistrationProgress(SaveProgressRequest) returns (SaveProgressResponse);
+  
+  // GetRegistrationProgress получение прогресса регистрации
+  rpc GetRegistrationProgress(GetProgressRequest) returns (GetProgressResponse);
+}
+
+// User информация о пользователе
+message User {
+  string id = 1;
+  string email = 2;
+  string phone = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string role = 6;
+  string status = 7;
+  int64 created_at = 8;
+}
+
+// LoginRequest запрос на вход
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+// LoginResponse ответ на вход
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+  User user = 4;
+}
+
+// RegisterRequest запрос на регистрацию
+message RegisterRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string phone = 3;
+  string email = 4;
+  string password = 5;
+}
+
+// RegisterResponse ответ на регистрацию
+message RegisterResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+  User user = 4;
+}
+
+// RefreshTokenRequest запрос на обновление токенов
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+// RefreshTokenResponse ответ на обновление токенов
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+}
+
+// LogoutRequest запрос на выход
+message LogoutRequest {}
+
+// LogoutResponse ответ на выход
+message LogoutResponse {
+  bool success = 1;
+}
+
+// SaveProgressRequest запрос на сохранение прогресса регистрации
+message SaveProgressRequest {
+  string phone = 1;
+  int32 step = 2;
+  string first_name = 3;
+  string last_name = 4;
+}
+
+// SaveProgressResponse ответ на сохранение прогресса
+message SaveProgressResponse {
+  bool success = 1;
+}
+
+// GetProgressRequest запрос на получение прогресса регистрации
+message GetProgressRequest {
+  string phone = 1;
+}
+
+// GetProgressResponse ответ на получение прогресса
+message GetProgressResponse {
+  int32 step = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string phone = 4;
+}

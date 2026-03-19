@@ -1,0 +1,91 @@
+version: '3'
+
+vars:
+  BACKEND_PATH: ../backend
+  FRONTEND_PATH: ../frontend
+
+tasks:
+  default:
+    desc: Показать доступные команды
+    cmds:
+      - task --list
+
+  generate:
+    desc: "Генерация всех proto файлов"
+    cmds:
+      - task: generate:go
+      - task: generate:js
+      - task: copy:backend
+      - task: copy:frontend
+
+  generate:go:
+    desc: "Генерация Go кода"
+    cmds:
+      - mkdir -p gen/go
+      - export PATH=$PATH:$(go env GOPATH)/bin && protoc
+        -I proto
+        proto/*/*.proto
+        --go_out=./gen/go/
+        --go_opt=paths=source_relative
+        --go-grpc_out=./gen/go/
+        --go-grpc_opt=paths=source_relative
+
+  generate:js:
+    desc: "Генерация TypeScript кода для gRPC-Web"
+    cmds:
+      - mkdir -p gen/ts
+      - protoc
+        -I proto
+        proto/*/*.proto
+        --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts
+        --js_out=import_style=es6,binary:./gen/ts/
+        --grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen/ts/
+
+  copy:backend:
+    desc: "Копирование Go файлов в backend"
+    cmds:
+      - rm -rf {{.BACKEND_PATH}}/internal/grpc/gen
+      - mkdir -p {{.BACKEND_PATH}}/internal/grpc/gen
+      - cp -r gen/go/* {{.BACKEND_PATH}}/internal/grpc/gen/
+      - echo "Go файлы скопированы в backend"
+
+  copy:frontend:
+    desc: "Копирование TS файлов в frontend (only _pb files + ServiceClient)"
+    cmds:
+      - mkdir -p {{.FRONTEND_PATH}}/src/shared/api/generated
+      - |
+        for dir in gen/ts/*/; do
+          service=$(basename "$dir")
+          target_dir="{{.FRONTEND_PATH}}/src/shared/api/generated/$service"
+          mkdir -p "$target_dir"
+          cp "$dir"*_pb.js "$target_dir/" 2>/dev/null || true
+          cp "$dir"*_pb.d.ts "$target_dir/" 2>/dev/null || true
+          cp "$dir"*ServiceClientPb.ts "$target_dir/" 2>/dev/null || true
+        done
+      - echo "TypeScript файлы скопированы (wrappers preserved)"
+
+  clean:
+    desc: "Очистка сгенерированных файлов"
+    cmds:
+      - rm -rf gen/
+      - rm -rf {{.BACKEND_PATH}}/internal/grpc/gen
+      - rm -rf {{.FRONTEND_PATH}}/src/shared/api/generated
+      - echo "Файлы очищены"
+
+  lint:
+    desc: Проверка proto файлов с buf
+    cmds:
+      - buf lint
+
+  format:
+    desc: Форматирование proto файлов
+    cmds:
+      - buf format -w
+
+  install:
+    desc: "Установка зависимостей для генерации"
+    cmds:
+      - yarn add ts-protoc-gen grpc-web
+      - go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+      - go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+      - echo "Зависимости установлены. Убедитесь что protoc установлен (brew install protobuf)"

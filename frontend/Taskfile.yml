@@ -1,0 +1,59 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Показать доступные команды
+    cmds:
+      - task --list
+
+  install:
+    desc: Установка зависимостей
+    cmds:
+      - yarn install
+
+  dev:
+    desc: Запуск dev сервера
+    cmds:
+      - yarn dev
+
+  build:
+    desc: Сборка для production
+    cmds:
+      - yarn build
+
+  preview:
+    desc: Предпросмотр production сборки
+    cmds:
+      - yarn preview
+
+  type-check:
+    desc: Проверка типов TypeScript
+    cmds:
+      - yarn type-check
+
+  lint:
+    desc: Линтинг кода
+    cmds:
+      - yarn lint
+
+  test:
+    desc: Запуск тестов
+    cmds:
+      - yarn test
+
+  test:watch:
+    desc: Запуск тестов в watch режиме
+    cmds:
+      - yarn test:watch
+
+  clean:
+    desc: Очистка артефактов сборки
+    cmds:
+      - rm -rf dist/
+      - rm -rf node_modules/.vite/
+
+  deploy:
+    desc: Деплой в Yandex Cloud (stage/production)
+    cmds:
+      - chmod +x deployment/scripts/deploy-frontend.sh
+      - ./deployment/scripts/deploy-frontend.sh

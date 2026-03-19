@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: My Project Stage API
+  version: 1.0.0
+
+# CUSTOMIZE: Замените на свои значения после создания контейнера и service account
+# container_id: получить через `yc serverless container get my-project-api-stage --format json | jq -r '.id'`
+# service_account_id: получить через `yc iam service-account get my-project-sa --format json | jq -r '.id'`
+
+x-yc-apigateway:
+  cors:
+    origin:
+      - http://localhost:3000
+      # CUSTOMIZE: Замените на URL вашего stage frontend bucket
+      - https://my-project-frontend-stage.website.yandexcloud.net
+    credentials: true
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowedHeaders:
+      - Authorization
+      - Content-Type
+      - X-User-Agent
+      - X-Grpc-Web
+      - Grpc-Timeout
+      - X-Request-ID
+    exposedHeaders:
+      - Grpc-Status
+      - Grpc-Message
+      - X-Request-ID
+
+paths:
+  /{proxy+}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        # CUSTOMIZE: Замените на ID вашего stage контейнера
+        container_id: YOUR_STAGE_CONTAINER_ID
+        # CUSTOMIZE: Замените на ID вашего service account
+        service_account_id: YOUR_SERVICE_ACCOUNT_ID
+      parameters:
+        - name: proxy
+          in: path
+          required: false
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          required: false
+          schema:
+            type: string

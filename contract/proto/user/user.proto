@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "template/gen/go/user";
+
+// UserService сервис управления пользователями
+service UserService {
+  // GetProfile получение профиля текущего пользователя
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+  
+  // UpdateProfile обновление профиля
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+  
+  // DeleteAccount удаление аккаунта
+  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+  
+  // ListUsers список пользователей (только для админов)
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+// UserProfile профиль пользователя
+message UserProfile {
+  string avatar_url = 1;
+  string bio = 2;
+}
+
+// User информация о пользователе
+message User {
+  string id = 1;
+  string email = 2;
+  string phone = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string role = 6;
+  string status = 7;
+  int64 created_at = 8;
+  UserProfile profile = 9;
+}
+
+// GetProfileRequest запрос на получение профиля
+message GetProfileRequest {}
+
+// GetProfileResponse ответ с профилем
+message GetProfileResponse {
+  User user = 1;
+}
+
+// UpdateProfileRequest запрос на обновление профиля
+message UpdateProfileRequest {
+  optional string first_name = 1;
+  optional string last_name = 2;
+  optional string avatar_url = 3;
+  optional string bio = 4;
+}
+
+// UpdateProfileResponse ответ на обновление профиля
+message UpdateProfileResponse {
+  User user = 1;
+}
+
+// DeleteAccountRequest запрос на удаление аккаунта
+message DeleteAccountRequest {}
+
+// DeleteAccountResponse ответ на удаление аккаунта
+message DeleteAccountResponse {
+  bool success = 1;
+}
+
+// ListUsersRequest запрос на список пользователей
+message ListUsersRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  optional string search = 3;
+  optional string role = 4;    // Фильтр по роли (admin, user)
+  optional string status = 5;  // Фильтр по статусу (active, inactive, deleted)
+}
+
+// ListUsersResponse ответ со списком пользователей
+message ListUsersResponse {
+  repeated User users = 1;
+  int64 total = 2;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "template/gen/go/admin";
+
+// AdminService сервис административных функций
+service AdminService {
+  // GetDashboardStats получение статистики для дашборда
+  rpc GetDashboardStats(GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+}
+
+// GetDashboardStatsRequest запрос на получение статистики
+message GetDashboardStatsRequest {}
+
+// DailyRegistration данные о регистрациях за день
+message DailyRegistration {
+  string date = 1;  // Формат: YYYY-MM-DD
+  int64 count = 2;
+}
+
+// GetDashboardStatsResponse ответ со статистикой
+message GetDashboardStatsResponse {
+  int64 total_users = 1;
+  int64 active_users = 2;
+  int64 new_users_today = 3;
+  int64 new_users_this_week = 4;
+  int64 new_users_this_month = 5;
+  repeated DailyRegistration daily_registrations = 6;
+}

@@ -1,0 +1,28 @@
+{
+  "lifecycleRules": [
+    {
+      "id": "delete-temp-files",
+      "enabled": true,
+      "filter": {
+        "prefix": "temp/"
+      },
+      "expiration": {
+        "days": "1"
+      }
+    },
+    {
+      "id": "delete-old-versions",
+      "enabled": true,
+      "noncurrentExpiration": {
+        "noncurrentDays": "30"
+      }
+    },
+    {
+      "id": "abort-incomplete-uploads",
+      "enabled": true,
+      "abortIncompleteMultipartUpload": {
+        "daysAfterExpiration": "1"
+      }
+    }
+  ]
+}

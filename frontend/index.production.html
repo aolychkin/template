@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Запрет кэширования HTML для SPA -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- PRODUCTION CSP -->
+    <!-- CUSTOMIZE: Замените YOUR_PROD_API_GATEWAY на ваш Production API Gateway URL -->
+    <!-- CUSTOMIZE: Замените YOUR_PROD_S3_BUCKET на ваш Production S3 bucket URL (если используете файлы) -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self'; 
+      script-src 'self'; 
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+      font-src 'self' https://fonts.gstatic.com; 
+      img-src 'self' data: https:; 
+      connect-src 'self' https://YOUR_PROD_API_GATEWAY.apigw.yandexcloud.net; 
+      frame-src 'self';
+      worker-src 'self' blob:;
+      base-uri 'self'; 
+      form-action 'self';
+      upgrade-insecure-requests;
+    " />
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Критичные стили для первого рендера -->
+    <style>
+      body { margin: 0; background: #fff; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      #root { min-height: 100vh; }
+      .app-loader { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+      .app-loader-spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #08A6A5; border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
+    <title>[PROJECT_NAME]</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="app-loader"><div class="app-loader-spinner"></div></div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+# Alert Manager конфигурация для YC Managed Prometheus
+# Интеграция с YC Notification Channels через @YandexCloudNotify_bot
+
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'default-receiver'
+  group_by: ['alertname', 'severity']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  
+  routes:
+    - receiver: 'telegram-receiver'
+      matchers:
+        - severity="warning"
+    - receiver: 'telegram-receiver'
+      matchers:
+        - severity="critical"
+
+receivers:
+  - name: 'default-receiver'
+    yandex_monitoring_configs:
+      # CUSTOMIZE: Замените на имя вашего notification channel
+      - channel_names: ['my-project']
+  
+  - name: 'telegram-receiver'
+    yandex_monitoring_configs:
+      # CUSTOMIZE: Замените на имя вашего notification channel
+      - channel_names: ['my-project']

@@ -1,0 +1,1 @@
+export { ChunkErrorBoundary } from './ChunkErrorBoundary';
