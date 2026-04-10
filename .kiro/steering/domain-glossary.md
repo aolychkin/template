@@ -1,8 +1,8 @@
 ---
-inclusion: manual
+inclusion: auto
+name: domain-glossary
+description: Project domain glossary and business terms. Use when discussing business logic, user roles, or domain-specific concepts.
 ---
-
-# Словарь терминов проекта
 
 > Этот файл помогает AI понимать бизнес-термины проекта.
 > Заполняйте по мере развития проекта.

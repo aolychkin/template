@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: security-checklist
+description: Security guidelines and production checklist. Use when reviewing security, handling authentication, or preparing for production deployment.
 ---
 
 # Security Guide - Защита проекта

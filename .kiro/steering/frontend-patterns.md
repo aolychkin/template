@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: "**/*.tsx,**/*.ts"
+fileMatchPattern: ["**/*.tsx", "**/*.ts"]
 ---
 
 # Frontend Guide - React + TypeScript + gRPC-Web

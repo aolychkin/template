@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: grpc-workflow
+description: gRPC method creation guide and templates. Use when adding new gRPC methods, modifying proto files, or working with gRPC services.
 ---
 
 # gRPC Guide - Методы + Шаблоны

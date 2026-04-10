@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: investigation-methods
+description: Methods for investigating and diagnosing problems. Use when debugging, troubleshooting errors, or analyzing unexpected behavior.
 ---
 
 # Investigation Methods - Методы исследования проблем

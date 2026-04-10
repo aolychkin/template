@@ -1,8 +1,8 @@
 ---
-inclusion: manual
+inclusion: auto
+name: yc-operations
+description: Yandex Cloud operations, resource IDs, and common YC CLI commands. Use when deploying, managing cloud resources, or troubleshooting YC infrastructure.
 ---
-
-# Yandex Cloud Operations
 
 > Этот файл содержит информацию о ресурсах YC и частые команды.
 > Заполняется после настройки инфраструктуры.

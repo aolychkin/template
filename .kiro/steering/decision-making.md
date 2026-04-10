@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: decision-making
+description: Algorithm for making technical decisions. Use when choosing between approaches, evaluating trade-offs, or planning implementation.
 ---
 
 # Decision Making - Алгоритм принятия решений

@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: development-workflow
+description: Development workflow with Kiro. Use when setting up development process, onboarding, or discussing how to work with the project.
 ---
 
 # Workflow разработки с Kiro

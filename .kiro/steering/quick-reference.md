@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: quick-reference
+description: Quick reference for gRPC templates and common patterns. Use when writing gRPC handlers, services, or looking up common code snippets.
 ---
 
 # Quick Reference - gRPC шаблоны

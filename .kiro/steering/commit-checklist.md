@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: commit-checklist
+description: Checklist before committing code. Use when preparing a commit, reviewing changes, or before git operations.
 ---
 
 # Commit Checklist - Чеклист перед коммитом

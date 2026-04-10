@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: steering-readme
+description: Overview of steering files structure and navigation. Use when onboarding or understanding how steering files are organized.
 ---
 
 # Kiro Steering - Контекст и правила проекта

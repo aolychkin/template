@@ -1,5 +1,7 @@
 ---
-inclusion: manual
+inclusion: auto
+name: lessons-learned
+description: Technical details and lessons learned from the project. Use when encountering known issues, reviewing past decisions, or understanding project-specific quirks.
 ---
 
 # Lessons Learned - Технические детали проекта

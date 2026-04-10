@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: "**/*.go,**/*.ts,**/*.tsx"
+fileMatchPattern: ["**/*.go", "**/*.ts", "**/*.tsx"]
 ---
 
 # Architecture Invariants - Критичные правила системы

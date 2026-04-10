@@ -1,4 +1,4 @@
-# Initial Project Setup - Design
+# Настройка YC окружения — Design
 
 ## Architecture Overview
 
@@ -36,29 +36,37 @@
 ## Setup Sequence
 
 ```
-1. Создание ресурсов YC
+1. Подготовка YC CLI
+   ├── yc init
+   └── Service Account + права
+
+2. Создание ресурсов
    ├── Container Registry
    ├── Lockbox Secret
-   ├── Managed PostgreSQL
+   ├── Managed PostgreSQL (stage + prod)
    ├── S3 Buckets (stage + prod)
    └── API Gateway (stage + prod)
 
-2. Конфигурация
-   ├── Генерация секретов (JWT, Encryption)
-   ├── Добавление секретов в Lockbox
-   ├── Обновление PROJECT_NAME в скриптах
-   └── Обновление steering файлов
+3. Настройка секретов в Lockbox
+   ├── DATABASE_URL (production)
+   ├── DATABASE_URL_LOCAL (stage)
+   ├── JWT_SECRET
+   ├── ENCRYPTION_KEY
+   └── SMTP_* (опционально)
 
-3. Первый деплой
+4. Первый деплой
    ├── Миграции БД
    ├── Backend → Serverless Container
    ├── Frontend → S3 Bucket
    └── API Gateway spec update
 
-4. Проверка
+5. Проверка
    ├── Health check
    ├── Frontend доступен
    └── Авторизация работает
+
+6. Документация
+   └── yc-operations.md с реальными ID
 ```
 
 ## Secrets Structure (Lockbox)
@@ -74,17 +82,6 @@
 | SMTP_PASSWORD | Email password | app-specific password |
 | SMTP_FROM | From address | noreply@example.com |
 
-## Environment Selection
-
-```go
-// config.go
-if cfg.Env == "production" {
-    // USE_LOCAL_DB = false → DATABASE_URL
-} else {
-    // USE_LOCAL_DB = true → DATABASE_URL_LOCAL
-}
-```
-
 ## Correctness Properties
 
 ### Property 1: Secret Isolation
@@ -93,31 +90,26 @@ if cfg.Env == "production" {
 - Docker образах
 - Логах приложения
 
-**Validates:** Requirements 2.2.3
+**Validates:** Requirement 4
 
 ### Property 2: Environment Separation
 *Для любого* запроса к stage окружению, он НЕ должен затрагивать production данные.
 
-**Validates:** Requirements 1.2.1
+**Validates:** Requirement 3
 
 ### Property 3: SSL Enforcement
-*Для любого* соединения с PostgreSQL, оно ДОЛЖНО использовать SSL.
+*Для любого* соединения с PostgreSQL в YC, оно ДОЛЖНО использовать SSL.
 
-**Validates:** Requirements 1.2.2
+**Validates:** Requirement 3
 
 ### Property 4: Port Compliance
 *Для любого* Serverless Container, он ДОЛЖЕН слушать порт 8080.
 
-**Validates:** Requirements 3.1.4
+**Validates:** Requirement 6
 
 ## Testing Strategy
 
 ### Manual Verification
-- Health check endpoint
-- Frontend accessibility
-- Login flow
-
-### Automated Checks
-- `go build` - backend компилируется
-- `yarn type-check` - frontend компилируется
-- `yarn lint` - нет ошибок линтера
+- Health check endpoint: `curl https://<API_GATEWAY_URL>/health`
+- Frontend accessibility: открыть URL в браузере
+- Login flow: войти тестовым пользователем
