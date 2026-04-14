@@ -13,6 +13,6 @@ Thumbs.db
 .kiro/settings/
 
 # Local development (создаётся спекой 3.2, не хранится в шаблоне)
-# docker-compose.yml
-# Taskfile.yml
+docker-compose.yml
+Taskfile.yml
 

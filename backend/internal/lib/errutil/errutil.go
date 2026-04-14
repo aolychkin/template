@@ -72,17 +72,18 @@ func WithUserID(ctx context.Context, userID string) context.Context {
 }
 
 // GetUserIDFromContext извлекает userID из контекста
+// UserID устанавливается AuthInterceptor в metadata ("user-id")
 func GetUserIDFromContext(ctx context.Context) (string, error) {
-	// Сначала проверяем context value
-	if id, ok := ctx.Value(UserIDKey).(string); ok && id != "" {
-		return id, nil
-	}
-
-	// Затем проверяем metadata (установлен auth interceptor)
+	// Проверяем metadata (установлен auth interceptor — основной источник)
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		if ids := md.Get("user-id"); len(ids) > 0 && ids[0] != "" {
 			return ids[0], nil
 		}
+	}
+
+	// Fallback: проверяем context value (для случаев когда userID установлен напрямую)
+	if id, ok := ctx.Value(UserIDKey).(string); ok && id != "" {
+		return id, nil
 	}
 
 	return "", errors.New("user_id not found in context")

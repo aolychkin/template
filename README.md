@@ -133,7 +133,7 @@ cd frontend && yarn type-check && yarn test
 
 ## Prerequisites
 
-- Go 1.22+
+- Go 1.22.x (строго — YC Serverless Containers не поддерживает выше)
 - Node.js 20+
 - Yarn
 - Docker + Docker Compose

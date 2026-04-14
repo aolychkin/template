@@ -39,10 +39,10 @@ inclusion: always
 ## Data Models
 
 ```
-User → UserProfile
+User → UserProfile (1:1, user_profiles.user_id)
+User → RefreshToken (1:N, refresh_tokens.user_id)
+User → RegistrationProgress (по phone, временная)
 ```
-
-[Добавьте описание моделей данных]
 
 ## Critical Requirements
 

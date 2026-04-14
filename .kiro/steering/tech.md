@@ -6,10 +6,12 @@ inclusion: always
 
 ## Stack
 
-**Backend:** Go + gRPC + GORM + PostgreSQL
+**Backend:** Go 1.22 + gRPC + GORM + PostgreSQL
 **Frontend:** React 19 + RTK Query + MUI + Vite
 **Protocol:** gRPC-Web (proto → TypeScript/Go)
 **Infrastructure:** YC Serverless Containers + S3 + Managed PostgreSQL (облако) ИЛИ Docker Compose + локальный PostgreSQL (локалка)
+
+> ⚠️ **Go 1.22 — СТРОГО!** YC Serverless Containers поддерживает только Go 1.22. НЕ обновлять `go.mod` выше `go 1.22.x`. При `go mod tidy` локальный тулчейн может перезаписать версию — всегда проверяй и откатывай.
 
 ## Архитектура окружений
 

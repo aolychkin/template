@@ -73,17 +73,21 @@ type Service interface {
 
 // AuthService реализация Service
 type AuthService struct {
-	storage   authStorage.Storage
-	jwtSecret string
-	logger    *slog.Logger
+	storage              authStorage.Storage
+	jwtSecret            string
+	accessTokenDuration  time.Duration
+	refreshTokenDuration time.Duration
+	logger               *slog.Logger
 }
 
 // New создаёт новый AuthService
-func New(storage authStorage.Storage, jwtSecret string, logger *slog.Logger) *AuthService {
+func New(storage authStorage.Storage, jwtSecret string, accessTokenDuration, refreshTokenDuration time.Duration, logger *slog.Logger) *AuthService {
 	return &AuthService{
-		storage:   storage,
-		jwtSecret: jwtSecret,
-		logger:    logger,
+		storage:              storage,
+		jwtSecret:            jwtSecret,
+		accessTokenDuration:  accessTokenDuration,
+		refreshTokenDuration: refreshTokenDuration,
+		logger:               logger,
 	}
 }
 
@@ -292,11 +296,12 @@ func generateRefreshToken() string {
 // generateTokenPair генерирует пару токенов
 func (s *AuthService) generateTokenPair(ctx context.Context, user *models.User) (*TokenPair, error) {
 	// Генерируем access token
-	accessToken, err := auth.GenerateAccessToken(
+	accessToken, err := auth.GenerateAccessTokenWithDuration(
 		user.ID,
 		user.Email,
 		string(user.Role),
 		s.jwtSecret,
+		s.accessTokenDuration,
 	)
 	if err != nil {
 		return nil, err
@@ -313,7 +318,7 @@ func (s *AuthService) generateTokenPair(ctx context.Context, user *models.User) 
 	tokenModel := &models.RefreshToken{
 		UserID:    user.ID,
 		TokenHash: refreshTokenHash,
-		ExpiresAt: time.Now().Add(auth.RefreshTokenDuration),
+		ExpiresAt: time.Now().Add(s.refreshTokenDuration),
 	}
 
 	if err := s.storage.SaveRefreshToken(ctx, tokenModel); err != nil {
@@ -323,6 +328,6 @@ func (s *AuthService) generateTokenPair(ctx context.Context, user *models.User) 
 	return &TokenPair{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresAt:    time.Now().Add(auth.AccessTokenDuration),
+		ExpiresAt:    time.Now().Add(s.accessTokenDuration),
 	}, nil
 }

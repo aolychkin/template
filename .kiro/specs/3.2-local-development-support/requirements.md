@@ -83,5 +83,5 @@
 
 #### Acceptance Criteria
 
-1. THE System SHALL добавить `docker-compose.yml` в корневой `.gitignore`, если запись отсутствует (файл генерируется при настройке, не хранится в шаблоне)
+1. THE System SHALL убедиться что `docker-compose.yml` присутствует (раскомментирован) в корневом `.gitignore` (файл генерируется при настройке, не хранится в шаблоне)
 2. THE System SHALL убедиться что `backend/.env` и `frontend/.env` присутствуют в соответствующих `.gitignore` файлах

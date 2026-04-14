@@ -98,13 +98,13 @@ func (c *Config) IsProduction() bool {
 }
 
 // Validate проверяет критичные настройки конфигурации
-// В production окружении паникует если JWT_SECRET не изменён
+// В production окружении завершает процесс если JWT_SECRET не изменён
 func (c *Config) Validate(log *slog.Logger) {
 	// Критичная проверка для production
 	if c.IsProduction() && c.JWTSecret == defaultJWTSecret {
 		log.Error("CRITICAL: JWT_SECRET must be changed in production!")
 		fmt.Fprintln(os.Stderr, "FATAL: JWT_SECRET is set to default value in production environment")
-		panic("JWT_SECRET must be changed in production")
+		os.Exit(1)
 	}
 
 	// Warning для dev/stage

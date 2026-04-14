@@ -104,6 +104,6 @@ type slogAdapter struct {
 	log *slog.Logger
 }
 
-func (a *slogAdapter) Printf(format string, args ...interface{}) {
+func (a *slogAdapter) Printf(format string, args ...any) {
 	a.log.Debug(fmt.Sprintf(format, args...))
 }

@@ -16,7 +16,7 @@ environment-setup
     │   ├── (macOS) Homebrew
     │   ├── Node.js (v20+)
     │   ├── Yarn
-    │   ├── Go (v1.22+)
+    │   ├── Go (v1.22.x — СТРОГО! YC не поддерживает выше)
     │   ├── Task (go-task)
     │   ├── Docker + Docker Compose
     │   ├── protoc
@@ -144,7 +144,7 @@ choco install protoc
 # Проверка всех инструментов (bash)
 node --version    # >= 20.x
 yarn --version    # >= 1.x
-go version        # >= 1.22
+go version        # = 1.22.x (СТРОГО! YC не поддерживает выше)
 task --version    # любая
 docker --version  # любая
 docker compose version  # любая
@@ -156,7 +156,7 @@ buf --version     # любая
 # Проверка всех инструментов (PowerShell)
 node --version    # >= 20.x
 yarn --version    # >= 1.x
-go version        # >= 1.22
+go version        # = 1.22.x (СТРОГО! YC не поддерживает выше)
 task --version    # любая
 docker --version  # любая
 docker compose version  # любая

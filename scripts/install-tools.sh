@@ -213,8 +213,12 @@ if command -v go &>/dev/null; then
     if [ "$GO_MAJOR" -lt 1 ] || ([ "$GO_MAJOR" -eq 1 ] && [ "$GO_MINOR" -lt 22 ]); then
         echo "[WARN] Go version $GO_VERSION is below minimum (1.22+)"
         VERSION_OK=false
+    elif [ "$GO_MAJOR" -gt 1 ] || ([ "$GO_MAJOR" -eq 1 ] && [ "$GO_MINOR" -gt 22 ]); then
+        echo "[WARN] Go version $GO_VERSION is above 1.22 — YC Serverless Containers supports only Go 1.22"
+        echo "       go mod tidy will overwrite go.mod version. You'll need to manually revert to 'go 1.22.7'"
+        echo "       Recommended: install Go 1.22.x for full YC compatibility"
     else
-        echo "[OK] Go $GO_VERSION >= 1.22"
+        echo "[OK] Go $GO_VERSION = 1.22 (YC compatible)"
     fi
 fi
 

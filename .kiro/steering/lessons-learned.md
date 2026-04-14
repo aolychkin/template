@@ -67,6 +67,23 @@ Where("user_profiles.id = ?", profileID)
 
 ## ⚡ Serverless Оптимизации
 
+### Go 1.22 — СТРОГО!
+
+**YC Serverless Containers поддерживает только Go 1.22.** Не обновлять `go.mod` выше `go 1.22.x`.
+
+**Проблема:** `go mod tidy` и `go get` автоматически перезаписывают директиву `go` в `go.mod` на версию локального тулчейна (например 1.25). Это ломает сборку Docker образа в YC.
+
+**Решение:** После любого `go get` или `go mod tidy` — проверить `head -5 backend/go.mod` и откатить версию если нужно:
+```bash
+# Проверить
+head -5 backend/go.mod
+# Должно быть: go 1.22.7
+
+# Если перезаписало — вручную исправить в go.mod
+```
+
+**Dockerfile:** `FROM golang:1.22-alpine` — должен совпадать с `go.mod`.
+
 ### Проблема Cold Start
 Serverless контейнеры (YC Serverless Containers) имеют cold start — первый запрос после простоя медленный.
 
@@ -190,9 +207,10 @@ const { RefreshTokenRequest } = await import('shared/api/generated/auth/auth_pb'
 ```go
 // internal/lib/interceptors/auth.go
 var publicMethods = map[string]bool{
-    "/user.UserService/Login": true,
-    "/user.UserService/Register": true,
-    // GetMe НЕТ - требует токен!
+    "/auth.AuthService/Login": true,
+    "/auth.AuthService/Register": true,
+    "/auth.AuthService/RefreshToken": true,
+    // GetProfile НЕТ - требует токен!
 }
 ```
 

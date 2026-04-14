@@ -25,8 +25,13 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-// GenerateAccessToken генерирует access token
+// GenerateAccessToken генерирует access token с дефолтной длительностью
 func GenerateAccessToken(userID, email, role, secret string) (string, error) {
+	return GenerateAccessTokenWithDuration(userID, email, role, secret, AccessTokenDuration)
+}
+
+// GenerateAccessTokenWithDuration генерирует access token с указанной длительностью
+func GenerateAccessTokenWithDuration(userID, email, role, secret string, duration time.Duration) (string, error) {
 	if secret == "" {
 		return "", errors.New("JWT secret is empty")
 	}
@@ -35,7 +40,7 @@ func GenerateAccessToken(userID, email, role, secret string) (string, error) {
 	}
 
 	now := time.Now()
-	expiresAt := now.Add(AccessTokenDuration)
+	expiresAt := now.Add(duration)
 
 	claims := Claims{
 		UserID: userID,

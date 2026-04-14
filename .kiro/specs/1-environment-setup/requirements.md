@@ -58,7 +58,7 @@
   - **Homebrew** (только macOS) — пакетный менеджер для установки остальных инструментов
   - **Node.js** (v20+) — для frontend
   - **Yarn** — пакетный менеджер frontend
-  - **Go** (v1.22+) — для backend
+  - **Go** (v1.22.x — СТРОГО!) — для backend. YC Serverless Containers поддерживает только Go 1.22. Версии выше (1.23+) НЕ совместимы с YC
   - **Task** (go-task) — таск-раннер для backend, frontend, contract
   - **Docker** и **Docker Compose** — для контейнеризации
   - **Protobuf compiler** (protoc) — для генерации gRPC кода
@@ -115,4 +115,5 @@
 
 1. WHEN все Required_Tools установлены, THE System SHALL вывести сообщение "Окружение готово" и предложить перейти к `initial-setup`
 2. WHEN какой-то Required_Tool не установлен, THE System SHALL вывести список недостающих инструментов и НЕ предлагать переход к следующему шагу
-3. THE System SHALL проверять минимальные версии: Node.js >= 20, Go >= 1.22
+3. THE System SHALL проверять минимальные версии: Node.js >= 20, Go = 1.22.x (СТРОГО — YC не поддерживает выше)
+4. WHEN Go версия > 1.22.x, THE System SHALL вывести предупреждение: "Go {версия} установлен, но YC Serverless Containers поддерживает только Go 1.22. Рекомендуется установить Go 1.22.x. При использовании более новой версии `go mod tidy` будет перезаписывать go.mod — потребуется ручной откат."

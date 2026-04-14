@@ -5,7 +5,7 @@
 ### 1. Docker Compose для локальной БД
 
 - [ ] 1.1 Создать `docker-compose.yml` в корне проекта с PostgreSQL 16, volume, healthcheck, порт 5432
-- [ ] 1.2 Добавить `docker-compose.yml` в корневой `.gitignore`
+- [ ] 1.2 Убедиться что `docker-compose.yml` раскомментирован в корневом `.gitignore` (уже добавлен в шаблоне)
 
 ### 2. Environment Config
 

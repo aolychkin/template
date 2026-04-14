@@ -73,7 +73,7 @@ func main() {
 	userStore := userStorage.New(db)
 
 	// Service layer
-	authSvc := authService.New(authStore, cfg.JWTSecret, log)
+	authSvc := authService.New(authStore, cfg.JWTSecret, cfg.AccessTokenDuration, cfg.RefreshTokenDuration, log)
 	userSvc := userService.New(userStore, log)
 	adminSvc := adminService.New(userStore, log)
 

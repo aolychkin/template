@@ -36,6 +36,7 @@
   - Заменить `[PROJECT_NAME]` в заголовке `# Project Structure - [PROJECT_NAME]` на реальное имя
 - [ ] 1.9 Обновить `backend/go.mod` — имя модуля `template` → новое имя. **ВАЖНО:** это потребует обновления ВСЕХ Go импортов (`template/internal/...` → `{новое-имя}/internal/...`) во всех `.go` файлах проекта (~20+ файлов)
 - [ ] 1.10 Обновить `go_package` в proto файлах (`contract/proto/*//*.proto`): `template/gen/go/...` → `{новое-имя}/gen/go/...`
+- [ ] 1.11 После обновления proto файлов — перегенерировать код: `cd contract && task generate` (скрипт генерации копирует файлы в `backend/internal/grpc/gen/`, путь `go_package` в proto влияет только на содержимое сгенерированных `.go` файлов, не на расположение)
 
 ### 2. Установка зависимостей
 
@@ -55,9 +56,19 @@
   ```bash
   cd contract && task generate
   ```
+- [ ] 2.5 Проверить что `go.mod` не перезаписан на версию выше 1.22:
+  ```bash
+  head -3 backend/go.mod
+  ```
+  Должно быть `go 1.22.7`. Если `go mod tidy`/`go get` перезаписал на более высокую версию — вручную вернуть `go 1.22.7` в `backend/go.mod`. Причина: YC Serverless Containers поддерживает только Go 1.22, Dockerfile использует `golang:1.22-alpine`.
 
 ### 3. Проверка компиляции
 
+- [ ] 3.0 Проверить что `go.mod` содержит `go 1.22.7` (не выше!):
+  ```bash
+  grep "^go " backend/go.mod
+  ```
+  Если версия выше — исправить вручную на `go 1.22.7`
 - [ ] 3.1 Проверить что `my-project`, `my_project` и `[PROJECT_NAME]` нигде не осталось:
   ```bash
   grep -rn "my-project\|my_project\|\[PROJECT_NAME\]" --include="*.go" --include="*.ts" --include="*.sh" --include="*.ps1" --include="*.yaml" --include="*.yml" --include="*.json" --include="*.md" --include=".env*" --include="*.html" . | grep -v node_modules | grep -v ".git/"
