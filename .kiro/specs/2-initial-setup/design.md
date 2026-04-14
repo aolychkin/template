@@ -24,14 +24,24 @@ initial-setup (общая инициализация)
 | Файл | Что менять |
 |------|-----------|
 | `backend/deployment/scripts/1-initial-deploy.sh` | `PROJECT_NAME="my-project"` |
+| `backend/deployment/scripts/1-initial-deploy.ps1` | `$PROJECT_NAME = "my-project"` |
 | `backend/deployment/scripts/2-setup-stage.sh` | `PROJECT_NAME="my-project"` |
+| `backend/deployment/scripts/2-setup-stage.ps1` | `$PROJECT_NAME = "my-project"` |
 | `backend/deployment/scripts/update-container.sh` | `PROJECT_NAME="my-project"` |
-| `backend/deployment/api-gateway/*.yaml` | URL и имена сервисов |
+| `backend/deployment/scripts/update-container.ps1` | `$PROJECT_NAME = "my-project"` |
+| `backend/deployment/api-gateway/stage.yaml` | `my-project-frontend-stage`, `my-project-sa`, `my-project-api-stage` |
+| `backend/deployment/api-gateway/production.yaml` | `my-project-frontend-prod`, `my-project-sa`, `my-project-api` |
+| `backend/deployment/DEPLOY.md` | `my-project-secrets`, `my-project-api`, `my-project-gateway-*` |
+| `backend/deployment/monitoring/alerting-rules.yml` | `service: my-project` (5 мест) |
 | `backend/Taskfile.yml` | `LOCKBOX_SECRET: my-project-secrets` |
 | `frontend/package.json` | `"name": "my-project-frontend"` |
-| `frontend/deployment/scripts/deploy-frontend.sh` | Имя S3 bucket |
-| `.kiro/steering/product.md` | Название и описание проекта |
-| `.kiro/steering/tech.md` | Имя проекта в заголовке |
+| `frontend/deployment/scripts/deploy-frontend.sh` | `PROJECT_NAME="my-project"` |
+| `frontend/deployment/scripts/deploy-frontend.ps1` | `$PROJECT_NAME = "my-project"` |
+| `frontend/src/shared/config/.env.example` | Комментарии с `my-project-api-*` |
+| `.kiro/steering/product.md` | `[PROJECT_NAME]` в заголовке |
+| `.kiro/steering/tech.md` | `[PROJECT_NAME]` в заголовке |
+| `.kiro/steering/structure.md` | `[PROJECT_NAME]` в заголовке |
+| `.kiro/steering/yc-operations.md` | Все `my-project-*` плейсхолдеры |
 
 ## Correctness Properties
 

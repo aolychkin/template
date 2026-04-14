@@ -2,9 +2,7 @@
 
 ## Введение
 
-Текущий шаблон проекта (fullstack gRPC: Go backend + React frontend + PostgreSQL) ориентирован исключительно на Yandex Cloud. Backend никогда не запускается локально, фронтенд подключается к stage-бекенду на YC. Это создаёт зависимость от облачной инфраструктуры даже для базовой разработки.
-
-Данная спека добавляет поддержку полностью локальной разработки: backend + PostgreSQL запускаются локально через docker-compose, фронтенд подключается к локальному бекенду. Спека выполняется после `initial-setup` (общая инициализация проекта) как альтернатива `yc-setup`.
+Данная спека настраивает полностью локальную разработку: backend + PostgreSQL запускаются локально через docker-compose, фронтенд подключается к локальному бекенду. Спека выполняется после `initial-setup` (общая инициализация проекта) как альтернатива `yc-setup`.
 
 ### Связь со спеками
 
@@ -55,9 +53,8 @@
 #### Acceptance Criteria
 
 1. WHEN выполняется настройка Local_Mode, THE System SHALL обновить `tech.md`: таблица окружений включает строку local с backend на localhost:44044 и БД на localhost:5432
-2. WHEN выполняется настройка Local_Mode, THE System SHALL удалить из `tech.md` предупреждение "Backend НИКОГДА не запускается локально"
-3. WHEN выполняется настройка Local_Mode, THE System SHALL обновить `tech.md`: секция Commands включает `cd backend && task dev` для локального запуска бекенда
-4. WHEN выполняется настройка Local_Mode, THE System SHALL обновить `structure.md`: добавить `docker-compose.yml` в корневую структуру проекта
+2. WHEN выполняется настройка Local_Mode, THE System SHALL обновить `tech.md`: секция Commands включает `cd backend && task dev`, `task local:up`, `task migrate:local`
+3. WHEN выполняется настройка Local_Mode, THE System SHALL обновить `structure.md`: добавить `docker-compose.yml` и корневой `Taskfile.yml` в корневую структуру проекта
 
 ### Требование 4: Taskfile интеграция для локального режима
 

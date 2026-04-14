@@ -27,15 +27,25 @@
 
 ### 3. Обновление tech.md
 
-- [ ] 3.1 Добавить секцию "Операционная система" в `tech.md` с выбранной ОС, shell и типом скриптов
-- [ ] 3.2 (Windows) Обновить секцию Commands в `tech.md` на PowerShell формат
+- [ ] 3.1 В `.kiro/steering/tech.md` после строки `## Stack` добавить секцию:
+  ```markdown
+  ## Операционная система
+  
+  **ОС:** {выбранная ОС}
+  **Shell:** {bash или powershell}
+  **Скрипты:** {.sh или .ps1}
+  ```
+- [ ] 3.2 (Windows) В `.kiro/steering/tech.md` секция `## Commands` — заменить все `bash` примеры на PowerShell:
+  - `cd frontend && task dev` → `cd frontend; task dev`
+  - `bash scripts/install-tools.sh` → `powershell scripts/install-tools.ps1`
+  - Все `.sh` ссылки → `.ps1`
 
-### 4. Создание PowerShell скриптов
+### 4. PowerShell скрипты (УЖЕ СОЗДАНЫ)
 
-- [ ] 4.1 Создать `backend/deployment/scripts/1-initial-deploy.ps1` — PowerShell версия 1-initial-deploy.sh
-- [ ] 4.2 Создать `backend/deployment/scripts/2-setup-stage.ps1` — PowerShell версия 2-setup-stage.sh
-- [ ] 4.3 Создать `backend/deployment/scripts/update-container.ps1` — PowerShell версия update-container.sh
-- [ ] 4.4 Создать `frontend/deployment/scripts/deploy-frontend.ps1` — PowerShell версия deploy-frontend.sh
+- [x] 4.1 `backend/deployment/scripts/1-initial-deploy.ps1` — создан
+- [x] 4.2 `backend/deployment/scripts/2-setup-stage.ps1` — создан
+- [x] 4.3 `backend/deployment/scripts/update-container.ps1` — создан
+- [x] 4.4 `frontend/deployment/scripts/deploy-frontend.ps1` — создан
 
 ### 5. Taskfile совместимость (Windows)
 

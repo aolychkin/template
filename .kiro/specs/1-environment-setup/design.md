@@ -13,6 +13,7 @@ environment-setup
     ├── 2. Сохранение в .kiro/settings/environment.json
     │
     ├── 3. Проверка и установка инструментов
+    │   ├── (macOS) Homebrew
     │   ├── Node.js (v20+)
     │   ├── Yarn
     │   ├── Go (v1.22+)
@@ -20,6 +21,7 @@ environment-setup
     │   ├── Docker + Docker Compose
     │   ├── protoc
     │   ├── buf
+    │   ├── jq
     │   └── YC CLI (опционально)
     │
     ├── 4. Обновление tech.md

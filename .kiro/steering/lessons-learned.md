@@ -227,15 +227,15 @@ exportSymbol: function(name, value, scope) {
 
 ## ☁️ Yandex Cloud
 
-### Архитектура окружений (КРИТИЧНО!)
+### Архитектура окружений
 
 | Окружение | Backend | Frontend | База данных |
 |-----------|---------|----------|-------------|
-| **local** | — (НЕТ!) | localhost:3000 → stage backend | stage DB |
-| **stage** | YC Container | S3 bucket | *_stage |
-| **prod** | YC Container | S3 bucket | *_prod |
+| **local** | localhost:44044 | localhost:3000 → localhost:44044 | localhost:5432 (docker-compose) |
+| **stage** | YC Container | S3 bucket | *_stage (Managed PostgreSQL) |
+| **prod** | YC Container | S3 bucket | *_prod (Managed PostgreSQL) |
 
-**⚠️ Backend НИКОГДА не запускается локально!** Только stage и prod на YC.
+> Режим выбирается при настройке: спека 3.1 (yc-setup) или 3.2 (local-development-support)
 
 ### Деплой контейнера
 ```bash

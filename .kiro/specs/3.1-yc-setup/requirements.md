@@ -116,4 +116,4 @@
 #### Acceptance Criteria
 
 1. WHEN разработчик завершает настройку YC THE System SHALL обновить `yc-operations.md` с реальными ID ресурсов (Container Registry, Container, API Gateway, S3 buckets)
-2. WHEN разработчик завершает настройку YC THE System SHALL сохранить предупреждение в `tech.md`: "Backend НИКОГДА не запускается локально"
+2. WHEN разработчик завершает настройку YC THE System SHALL обновить `tech.md`: в секции Commands оставить только YC-релевантные команды (deploy, migrate:stage, seed:stage)

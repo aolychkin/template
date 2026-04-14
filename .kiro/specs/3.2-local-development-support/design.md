@@ -112,10 +112,9 @@ docker-compose.yml
 
 ### Steering файлы
 
-**tech.md** — обновить:
-- Таблица окружений: добавить строку `local`
-- Убрать "Backend НИКОГДА не запускается локально"
-- Добавить `cd backend && task dev` в Commands
+**tech.md** — проверить:
+- Таблица окружений: строка `local` присутствует
+- Секция Commands: включает `cd backend && task dev`, `task local:up`, `task migrate:local`
 
 **structure.md** — добавить `docker-compose.yml` в корневую структуру
 

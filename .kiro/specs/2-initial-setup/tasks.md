@@ -11,12 +11,23 @@
   - `backend/deployment/scripts/update-container.sh` и `.ps1`
   - `backend/deployment/api-gateway/stage.yaml`
   - `backend/deployment/api-gateway/production.yaml`
+  - `backend/deployment/DEPLOY.md`
+  - `backend/deployment/monitoring/alerting-rules.yml` (поле `service:`, 5 мест)
   - `frontend/deployment/scripts/deploy-frontend.sh` и `.ps1`
+  - `frontend/src/shared/config/.env.example` (комментарии)
+  - `.kiro/steering/yc-operations.md` (все `my-project-*` плейсхолдеры)
 - [ ] 1.3 Обновить `backend/Taskfile.yml` — переменная `LOCKBOX_SECRET`
 - [ ] 1.4 Обновить `frontend/package.json` — поле `name`
-- [ ] 1.5 Обновить `.kiro/steering/product.md` — название и описание проекта
-- [ ] 1.6 Обновить `.kiro/steering/tech.md` — имя проекта в заголовке
-- [ ] 1.7 Обновить `backend/go.mod` — имя модуля (если нужно)
+- [ ] 1.5 В `.kiro/steering/product.md`:
+  - Заменить `[PROJECT_NAME]` в заголовке на реальное имя
+  - Заполнить секцию `## Purpose` — описание продукта
+  - Заполнить `## Scale & Context` — масштаб и аудитория
+  - Обновить `## Key Features` если нужно
+- [ ] 1.6 В `.kiro/steering/tech.md`:
+  - Заменить `[PROJECT_NAME]` в заголовке `# Tech Stack - [PROJECT_NAME]` на реальное имя
+- [ ] 1.7 В `.kiro/steering/structure.md`:
+  - Заменить `[PROJECT_NAME]` в заголовке `# Project Structure - [PROJECT_NAME]` на реальное имя
+- [ ] 1.8 Обновить `backend/go.mod` — имя модуля (если нужно)
 
 ### 2. Установка зависимостей
 
@@ -39,15 +50,20 @@
 
 ### 3. Проверка компиляции
 
-- [ ] 3.1 Проверить backend:
+- [ ] 3.1 Проверить что `my-project` нигде не осталось:
+  ```bash
+  grep -r "my-project" --include="*.go" --include="*.ts" --include="*.sh" --include="*.ps1" --include="*.yaml" --include="*.yml" --include="*.json" --include="*.md" . | grep -v node_modules | grep -v ".git/"
+  ```
+  Допустимые исключения: README.md (инструкции шаблона), спеки (документация)
+- [ ] 3.2 Проверить backend:
   ```bash
   cd backend && go build -o /dev/null ./cmd/server
   ```
-- [ ] 3.2 Проверить frontend:
+- [ ] 3.3 Проверить frontend:
   ```bash
   cd frontend && yarn type-check
   ```
-- [ ] 3.3 Проверить линтер:
+- [ ] 3.4 Проверить линтер:
   ```bash
   cd frontend && yarn lint
   ```

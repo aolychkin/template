@@ -9,28 +9,45 @@ inclusion: always
 **Backend:** Go + gRPC + GORM + PostgreSQL
 **Frontend:** React 19 + RTK Query + MUI + Vite
 **Protocol:** gRPC-Web (proto → TypeScript/Go)
-**Infrastructure:** YC Serverless Containers + S3 + Managed PostgreSQL
+**Infrastructure:** YC Serverless Containers + S3 + Managed PostgreSQL (облако) ИЛИ Docker Compose + локальный PostgreSQL (локалка)
 
-## Архитектура окружений (КРИТИЧНО!)
+## Архитектура окружений
 
 | Окружение | Backend | Frontend | База данных |
 |-----------|---------|----------|-------------|
-| **local** | — (НЕТ!) | localhost:3000 → stage backend | stage DB |
-| **stage** | YC Container | S3 bucket | *_stage |
-| **prod** | YC Container | S3 bucket | *_prod |
+| **local** | localhost:44044 | localhost:3000 → localhost:44044 | localhost:5432 (docker-compose) |
+| **stage** | YC Container | S3 bucket | *_stage (Managed PostgreSQL) |
+| **prod** | YC Container | S3 bucket | *_prod (Managed PostgreSQL) |
 
-**⚠️ Backend НИКОГДА не запускается локально!** Только stage и prod на YC.
+> Режим выбирается при настройке: спека 3.1 (yc-setup) или 3.2 (local-development-support)
 
 ## Commands
 
 ```bash
-# Frontend (локально → stage backend)
+# Установка инструментов (первый запуск)
+bash scripts/install-tools.sh        # macOS/Linux
+# powershell scripts/install-tools.ps1  # Windows
+
+# Frontend (локально)
 cd frontend && task dev    # :3000
+
+# Backend (локально, если local-development-support)
+cd backend && task dev     # :44044
 
 # Proto
 cd contract && task generate
 
-# Деплой backend
+# Локальная БД (если local-development-support)
+task local:up              # запуск PostgreSQL
+task local:down            # остановка
+task local:reset           # пересоздание с нуля
+
+# Миграции
+cd backend && task migrate:local   # локальная БД (из .env)
+cd backend && task migrate:stage   # stage через Lockbox
+cd backend && task migrate:prod    # production (ОСТОРОЖНО!)
+
+# Деплой backend (YC)
 cd backend && task deploy  # stage или production
 
 # Seed
@@ -39,7 +56,7 @@ cd backend && task seed:stage   # stage через Lockbox
 cd backend && task seed:prod    # production (ОСТОРОЖНО!)
 ```
 
-**⚠️ НЕТ команды `task dev` для backend!** Backend работает только на YC.
+> Для Windows: .sh скрипты имеют .ps1 аналоги рядом
 
 ## Critical Rules
 
@@ -55,7 +72,6 @@ cd backend && task seed:prod    # production (ОСТОРОЖНО!)
 
 **НИКОГДА:**
 - Не коммить без подтверждения пользователя
-- Не auto-load manual steering файлы "just in case"
 - Не раскрывать внутренние детали в ошибках
 - **Не помечать задачу выполненной** без проверки реального кода
 

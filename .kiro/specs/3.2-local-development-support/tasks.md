@@ -27,13 +27,30 @@
 
 ### 5. Обновление Steering-файлов
 
-- [ ] 5.1 Обновить `tech.md`:
-  - Добавить строку `local` в таблицу окружений (backend localhost:44044, БД localhost:5432)
-  - Убрать "Backend НИКОГДА не запускается локально"
-  - Добавить `cd backend && task dev` в секцию Commands
-- [ ] 5.2 Обновить `structure.md`:
-  - Добавить `docker-compose.yml` в корневую структуру
-  - Добавить корневой `Taskfile.yml` в структуру
+- [ ] 5.1 В `.kiro/steering/tech.md`:
+  - Секция `## Архитектура окружений` — убедиться что строка `local` присутствует в таблице:
+    ```
+    | **local** | localhost:44044 | localhost:3000 → localhost:44044 | localhost:5432 (docker-compose) |
+    ```
+  - Секция `## Commands` — убедиться что присутствуют команды:
+    ```
+    # Backend (локально)
+    cd backend && task dev     # :44044
+    
+    # Локальная БД
+    task local:up              # запуск PostgreSQL
+    task local:down            # остановка
+    task local:reset           # пересоздание с нуля
+    
+    # Миграции
+    cd backend && task migrate:local   # локальная БД (из .env)
+    ```
+- [ ] 5.2 В `.kiro/steering/structure.md`:
+  - Секция `## Directories` — убедиться что в корневой структуре присутствуют:
+    ```
+    ├── docker-compose.yml   # Локальная БД
+    ├── Taskfile.yml         # Корневой таск-раннер (local:up, local:down, local:reset)
+    ```
 
 ### 6. Проверка (выполнять последовательно)
 

@@ -9,7 +9,7 @@ Production-ready шаблон для fullstack приложений на Go + gR
 | Backend | Go, gRPC, GORM, PostgreSQL |
 | Frontend | React 19, RTK Query, MUI, Vite |
 | Протокол | gRPC-Web (proto → TypeScript/Go) |
-| Инфраструктура | Yandex Cloud Serverless Containers, S3, Managed PostgreSQL |
+| Инфраструктура | YC Serverless Containers + S3 (облако) ИЛИ Docker Compose (локалка) |
 
 ## Что внутри
 
@@ -19,52 +19,61 @@ Production-ready шаблон для fullstack приложений на Go + gR
 - Rate limiting, CSRF, XSS protection
 - Clean Architecture (backend) + Feature-Sliced Design (frontend)
 - gRPC-Web клиент с retry, circuit breaker, auto token refresh
-- Деплой скрипты для Yandex Cloud
+- Деплой скрипты (.sh + .ps1) для Yandex Cloud
+- Скрипты автоустановки инструментов (macOS, Linux, Windows)
 - Steering файлы для AI-ассистента (Kiro)
+- 4 спеки для пошаговой настройки проекта
 
-## Начало работы
+## Быстрый старт
 
 ### 1. Создайте свой репозиторий
 
-Нажмите кнопку **"Use this template"** → **"Create a new repository"** на GitHub.
+Нажмите **"Use this template"** → **"Create a new repository"** на GitHub.
 
-Это создаст чистый репозиторий без связи с оригиналом.
-
-### 2. Клонируйте и настройте
+### 2. Клонируйте и откройте в Kiro
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
 cd YOUR_PROJECT
 ```
 
-### 3. Переименуйте проект
+### 3. Следуйте спекам по порядку
 
-Замените `[PROJECT_NAME]` в steering файлах (`.kiro/steering/`) на название вашего проекта.
+Проект настраивается через 4 спеки в `.kiro/specs/`:
 
-### 4. Prerequisites
+```
+Спека 1: 1-environment-setup     → Определение ОС, установка инструментов
+Спека 2: 2-initial-setup         → Переименование проекта, зависимости, компиляция
+Спека 3.1: 3.1-yc-setup          → Настройка Yandex Cloud (по выбору)
+Спека 3.2: 3.2-local-dev-support → Настройка локальной разработки (по выбору)
+```
 
-- Go 1.22+
-- Node.js 20+
-- Yarn
-- PostgreSQL 16+ (рекомендуется Yandex Cloud Managed PostgreSQL)
-- [Task](https://taskfile.dev/)
-- [Buf](https://buf.build/) (для proto)
-- [Yandex Cloud CLI](https://cloud.yandex.ru/docs/cli/quickstart) (для деплоя)
+Откройте `tasks.md` в нужной спеке и выполняйте задачи по порядку.
 
-### 5. Настройте окружение
+### Быстрый путь (локальная разработка)
+
+После выполнения спек 1 и 2 (установка инструментов + переименование проекта):
 
 ```bash
-# Backend
-cd backend
-cp .env.example .env
-# Отредактируйте .env — укажите DATABASE_URL, JWT_SECRET
+# Спека 3.2 создаст docker-compose.yml, Taskfile.yml, .env файлы
+# После этого:
 
-# Frontend
-cd frontend
-yarn install
-cp .env.example .env
-# Отредактируйте .env — укажите VITE_GRPC_HOST
+task local:up                        # запуск PostgreSQL
+cd backend && task migrate:local     # миграции
+cd backend && task seed              # тестовые данные
+cd backend && task dev               # backend :44044
+
+# В новом терминале:
+cd frontend && task dev              # frontend :3000
 ```
+
+## Окружения
+
+| Окружение | Backend | Frontend | БД |
+|-----------|---------|----------|----|
+| local | localhost:44044 | localhost:3000 | localhost:5432 (docker-compose) |
+| stage | YC Container | S3 bucket | Managed PostgreSQL (*_stage) |
+| production | YC Container | S3 bucket | Managed PostgreSQL (*_prod) |
 
 ## Структура проекта
 
@@ -72,84 +81,71 @@ cp .env.example .env
 ├── backend/             # Go gRPC сервер (Clean Architecture)
 │   ├── cmd/server/      # Entry point
 │   ├── internal/        # Бизнес-логика, storage, gRPC handlers
-│   └── deployment/      # Скрипты деплоя
+│   └── deployment/      # Скрипты деплоя (.sh + .ps1)
 ├── frontend/            # React приложение (Feature-Sliced Design)
 │   ├── src/
-│   └── deployment/      # Скрипты деплоя
+│   └── deployment/      # Скрипт деплоя (.sh + .ps1)
 ├── contract/            # Proto файлы + генерация (Go + TypeScript)
-└── .kiro/steering/      # Правила для AI-ассистента
+├── scripts/             # Скрипты установки инструментов
+│   ├── install-tools.sh   # macOS/Linux
+│   └── install-tools.ps1  # Windows
+├── docker-compose.yml   # Локальная БД (создаётся при local-development-support)
+├── Taskfile.yml         # Корневой таск-раннер (local:up/down/reset)
+└── .kiro/
+    ├── specs/           # Спеки настройки (1, 2, 3.1, 3.2)
+    ├── settings/        # Настройки окружения (не в git)
+    └── steering/        # Правила для Kiro AI
 ```
 
 ## Команды
 
 ```bash
-# Frontend (локальная разработка)
-cd frontend && task dev          # :3000
+# Установка инструментов
+bash scripts/install-tools.sh        # macOS/Linux
+powershell scripts/install-tools.ps1 # Windows
 
-# Proto (при изменениях в .proto файлах)
+# Локальная БД
+task local:up       # запуск PostgreSQL
+task local:down     # остановка
+task local:reset    # пересоздание с нуля
+
+# Backend
+cd backend && task dev              # локальный сервер :44044
+cd backend && task deploy           # деплой в YC
+
+# Frontend
+cd frontend && task dev             # :3000
+cd frontend && task deploy          # деплой в YC S3
+
+# Миграции
+cd backend && task migrate:local    # локальная БД
+cd backend && task migrate:stage    # stage (Lockbox)
+cd backend && task migrate:prod     # production (ОСТОРОЖНО!)
+
+# Proto
 cd contract && task generate
-
-# Деплой
-cd backend && task deploy        # stage / production
-cd frontend && task deploy       # stage / production
 
 # Тесты
 cd backend && go test -v ./...
 cd frontend && yarn type-check && yarn test
 ```
 
-> ⚠️ Backend не запускается локально. Только stage и production на Yandex Cloud.
+## Prerequisites
 
-## Окружения
+- Go 1.22+
+- Node.js 20+
+- Yarn
+- Docker + Docker Compose
+- [Task](https://taskfile.dev/) (go-task)
+- [protoc](https://github.com/protocolbuffers/protobuf/releases)
+- [buf](https://buf.build/)
+- [YC CLI](https://cloud.yandex.ru/docs/cli/quickstart) (только для yc-setup)
 
-| Окружение | Backend | Frontend | БД |
-|-----------|---------|----------|----|
-| local | — | localhost:3000 → stage backend | stage DB |
-| stage | YC Container | S3 bucket | *_stage |
-| production | YC Container | S3 bucket | *_prod |
+Все инструменты устанавливаются автоматически: `bash scripts/install-tools.sh`
 
-## Деплой (Yandex Cloud)
+## Работа с Kiro AI
 
-### Подготовка инфраструктуры
-
-1. Managed PostgreSQL (stage + production БД)
-2. Container Registry
-3. Service Account с правами
-4. Lockbox секрет (DATABASE_URL, JWT_SECRET, ENCRYPTION_KEY)
-5. Object Storage buckets (frontend stage + production)
-6. API Gateway
-
-### Настройка скриптов
-
-**Backend** — `backend/deployment/scripts/update-container.sh`:
-```bash
-PROJECT_NAME="my-project"
-```
-
-**Frontend** — `frontend/deployment/scripts/deploy-frontend.sh`:
-```bash
-PROJECT_NAME="my-project"
-STAGE_BUCKET="${PROJECT_NAME}-frontend-stage"
-PROD_BUCKET="${PROJECT_NAME}-frontend-prod"
-```
-
-### Запуск
-
-```bash
-cd backend && task deploy     # Выберите stage или production
-cd frontend && task deploy    # Выберите stage или production
-```
-
-## Работа с AI-ассистентом (Kiro)
-
-Шаблон включает steering файлы в `.kiro/steering/`, которые автоматически подгружаются в контекст Kiro.
-
-Доступные manual-стиринги:
-- `#grpc-workflow` — добавление gRPC методов
-- `#security-checklist` — security guidelines
-- `#decision-making` — алгоритм принятия решений
-- `#commit-checklist` — чеклист перед коммитом
-- `#quick-reference` — gRPC шаблоны, частые ошибки
+Шаблон включает steering файлы в `.kiro/steering/`, которые автоматически подгружаются в контекст Kiro по типу файла или по контексту запроса.
 
 ## License
 

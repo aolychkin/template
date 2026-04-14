@@ -18,22 +18,24 @@ description: Overview of steering files structure and navigation. Use when onboa
 
 ### 📂 По типу файла (inclusion: fileMatch)
 
-- **backend-patterns.md** - при работе с `**/*.go`
-- **frontend-patterns.md** - при работе с `**/*.tsx,**/*.ts`
-- **design-system.md** - при работе с `**/*.tsx`
-- **architecture-invariants.md** - при работе с `**/*.go,**/*.ts,**/*.tsx`
+- **backend-patterns.md** — при работе с `**/*.go`
+- **frontend-patterns.md** — при работе с `**/*.tsx`, `**/*.ts`
+- **design-system.md** — при работе с `**/*.tsx`
+- **architecture-invariants.md** — при работе с `**/*.go`, `**/*.ts`, `**/*.tsx`
 
-### 🔧 По запросу (inclusion: manual)
+### 🤖 Автоматически по контексту (inclusion: auto)
 
-- **quick-reference.md** - gRPC шаблоны, частые ошибки
-- **decision-making.md** - алгоритм принятия решений
-- **commit-checklist.md** - перед коммитом
-- **grpc-workflow.md** - добавление gRPC методов
-- **security-checklist.md** - security checklist
-- **lessons-learned.md** - технические детали проекта
-- **development-workflow.md** - workflow разработки
-- **investigation-methods.md** - методы диагностики
-- **yc-operations.md** - Yandex Cloud операции
+- **quick-reference.md** — gRPC шаблоны, частые ошибки
+- **decision-making.md** — алгоритм принятия решений
+- **commit-checklist.md** — перед коммитом
+- **grpc-workflow.md** — добавление gRPC методов
+- **security-checklist.md** — security checklist
+- **lessons-learned.md** — технические детали проекта
+- **development-workflow.md** — workflow разработки
+- **investigation-methods.md** — методы диагностики
+- **yc-operations.md** — Yandex Cloud операции
+- **domain-glossary.md** — словарь терминов
+- **README.md** — навигация по steering
 
 ## 🤖 How AI should work with steering
 
@@ -41,9 +43,9 @@ description: Overview of steering files structure and navigation. Use when onboa
 - `product.md`, `tech.md`, `structure.md` (~15KB total)
 - Содержат минимальный контекст для начала работы
 
-### Что никогда не загружается автоматически
-- Все файлы с `inclusion: manual`
-- Загружаются только по явному запросу через `#file-name`
+### Что загружается автоматически по контексту
+- Все файлы с `inclusion: auto` — Kiro сам решает когда подключить на основе description
+- Также доступны через `#file-name` или `/file-name` в чате
 
 ### Как найти нужный файл
 1. Посмотри `structure.md` → Steering Navigation
@@ -55,7 +57,6 @@ description: Overview of steering files structure and navigation. Use when onboa
 - Loading all steering files at once (перегрузка контекста)
 - Copying rules into task context (дублирование)
 - Modifying product.md/tech.md/structure.md без review
-- Auto-loading manual files "just in case"
 
 ## 🔄 Обновление документации
 

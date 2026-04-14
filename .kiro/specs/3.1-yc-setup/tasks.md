@@ -85,10 +85,20 @@
   ```
 - [ ] 6.4 Проверить вход в систему
 
-### 7. Документация
+### 7. Обновление Steering-файлов
 
-- [ ] 7.1 Обновить `yc-operations.md` с реальными ID ресурсов
-- [ ] 7.2 Обновить `lessons-learned.md` с особенностями проекта
+- [ ] 7.1 В `.kiro/steering/yc-operations.md`:
+  - Заполнить секцию `## Ресурсы` реальными ID:
+    - Container Registry ID
+    - Serverless Container ID (prod + stage)
+    - API Gateway ID (prod + stage)
+    - S3 bucket names (prod + stage)
+    - Lockbox secret name
+    - Service Account ID
+  - Добавить часто используемые YC CLI команды для этого проекта
+- [ ] 7.2 В `.kiro/steering/lessons-learned.md`:
+  - Добавить особенности настройки YC для этого проекта
+  - Добавить решённые проблемы при деплое (если были)
 
 ---
 

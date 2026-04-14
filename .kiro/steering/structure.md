@@ -10,11 +10,20 @@ inclusion: always
 project/
 ├── backend/
 │   ├── cmd/server/      # Entry point
+│   ├── deployment/      # Скрипты деплоя (.sh + .ps1)
 │   └── internal/        # Go gRPC сервер
-├── frontend/            # React приложение
+├── frontend/
+│   ├── deployment/      # Скрипт деплоя frontend (.sh + .ps1)
+│   └── src/             # React приложение
 ├── contract/            # Proto + генерация
-└── .kiro/               # Документация
-    ├── specs/           # Спецификации фич
+├── scripts/             # Скрипты установки инструментов
+│   ├── install-tools.sh   # macOS/Linux
+│   └── install-tools.ps1  # Windows
+├── docker-compose.yml   # Локальная БД (генерируется при local-development-support)
+├── Taskfile.yml         # Корневой таск-раннер (local:up, local:down, local:reset)
+└── .kiro/
+    ├── specs/           # Спецификации (1-environment-setup, 2-initial-setup, 3.1/3.2)
+    ├── settings/        # Настройки окружения (environment.json, не в git)
     └── steering/        # Правила для Kiro
 ```
 
@@ -47,21 +56,23 @@ src/
 
 ## Steering Navigation
 
-**Всегда загружается:**
+**Всегда загружается (always):**
 - product.md, tech.md, structure.md
 
 **По типу файла (fileMatch):**
-- `**/*.go` → `#backend-patterns`, `#architecture-invariants`
-- `**/*.tsx,**/*.ts` → `#frontend-patterns`, `#architecture-invariants`
-- `**/*.tsx` → `#design-system`
+- `**/*.go` → backend-patterns, architecture-invariants
+- `**/*.tsx`, `**/*.ts` → frontend-patterns, architecture-invariants
+- `**/*.tsx` → design-system
 
-**По запросу (manual):**
-- `#quick-reference` - gRPC шаблоны, частые ошибки
-- `#decision-making` - алгоритм принятия решений
-- `#commit-checklist` - перед коммитом
-- `#grpc-workflow` - добавление gRPC методов
-- `#security-checklist` - security guidelines
-- `#lessons-learned` - технические детали проекта
-- `#development-workflow` - workflow разработки
-- `#investigation-methods` - методы диагностики
-- `#yc-operations` - Yandex Cloud операции
+**Автоматически по контексту (auto):**
+- quick-reference — gRPC шаблоны, частые ошибки
+- decision-making — алгоритм принятия решений
+- commit-checklist — перед коммитом
+- grpc-workflow — добавление gRPC методов
+- security-checklist — security guidelines
+- lessons-learned — технические детали проекта
+- development-workflow — workflow разработки
+- investigation-methods — методы диагностики
+- yc-operations — Yandex Cloud операции
+- steering-readme — навигация по steering
+- domain-glossary — словарь терминов
