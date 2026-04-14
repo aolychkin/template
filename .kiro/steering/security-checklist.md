@@ -15,7 +15,7 @@ openssl rand -base64 64
 
 # .env
 JWT_SECRET=<generated_64_bytes>
-ENV=production
+ENVIRONMENT=production
 ```
 
 ### 2. CORS Origins
@@ -32,8 +32,8 @@ allowedOrigins := map[string]bool{
 - ✅ HSTS headers
 
 ### 4. Database
-- ✅ PostgreSQL в production (не SQLite)
-- ✅ SSL connections
+- ✅ PostgreSQL во всех окружениях
+- ✅ SSL connections (production/stage)
 - ✅ Regular backups
 
 ## ✅ Реализованная защита
@@ -195,8 +195,8 @@ const updateProfile = async (data) => {
 
 ### 🔴 КРИТИЧНО - Секреты и окружение
 - [ ] JWT_SECRET - 64+ символов (сгенерировать новый для production)
-- [ ] ENV=production
-- [ ] PostgreSQL вместо SQLite
+- [ ] ENVIRONMENT=production
+- [ ] SSL connections для PostgreSQL (sslmode=require)
 
 ### 🔴 КРИТИЧНО - CORS и домены
 - [ ] Backend `config.go` - production AllowedOrigins настроены

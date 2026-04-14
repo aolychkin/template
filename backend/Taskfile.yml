@@ -16,7 +16,7 @@ tasks:
     cmds:
       - go run {{.MAIN_PATH}}
     env:
-      ENV: development
+      ENVIRONMENT: development
 
   build:
     desc: Сборка бинарника
@@ -120,7 +120,7 @@ tasks:
     cmds:
       - go run ./cmd/seed
     env:
-      ENV: development
+      ENVIRONMENT: development
 
   seed:stage:
     desc: Заполнить stage БД тестовыми данными (через Lockbox)
@@ -135,7 +135,7 @@ tasks:
         fi
         go run ./cmd/seed
     env:
-      ENV: stage
+      ENVIRONMENT: stage
 
   seed:prod:
     desc: Заполнить production БД (ОСТОРОЖНО!)
@@ -154,4 +154,4 @@ tasks:
         fi
         go run ./cmd/seed
     env:
-      ENV: production
+      ENVIRONMENT: production

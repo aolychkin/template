@@ -51,9 +51,17 @@ func Load() *Config {
 		}
 	}
 
+	// HTTP_PORT (формат ":8080") имеет приоритет над SERVER_PORT
+	// YC Serverless Containers передаёт HTTP_PORT=:8080
+	serverPort := getEnv("SERVER_PORT", "44044")
+	if httpPort := os.Getenv("HTTP_PORT"); httpPort != "" {
+		// HTTP_PORT приходит в формате ":8080", убираем двоеточие
+		serverPort = strings.TrimPrefix(httpPort, ":")
+	}
+
 	return &Config{
 		// Server (gRPC-Web over HTTP)
-		ServerPort: getEnv("SERVER_PORT", "44044"),
+		ServerPort: serverPort,
 		ServerHost: getEnv("SERVER_HOST", "0.0.0.0"),
 
 		// Database

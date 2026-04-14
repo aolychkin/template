@@ -46,7 +46,7 @@ if ($RUN_MIGRATIONS -eq "yes" -or $RUN_MIGRATIONS -eq "y") {
         Write-Host "WARNING: Failed to get DATABASE_URL from Lockbox"
     } else {
         $env:DATABASE_URL = $DB_URL
-        $env:ENV = $ENV_NAME
+        $env:ENVIRONMENT = $ENV_NAME
         go run cmd/migrate/main.go
         Write-Host "Migrations complete"
     }
@@ -79,6 +79,8 @@ $SERVICE_ACCOUNT_ID = $saJson.id
 $secretJson = yc lockbox secret get $LOCKBOX_SECRET_NAME --folder-id $FOLDER_ID --format json | ConvertFrom-Json
 $SECRET_ID = $secretJson.id
 
+$USE_LOCAL_DB = if ($ENV_NAME -eq "stage") { "true" } else { "false" }
+
 Write-Host "Deploying new revision ($ENV_NAME)..."
 yc serverless container revision deploy `
   --container-name $CONTAINER_NAME `
@@ -88,8 +90,9 @@ yc serverless container revision deploy `
   --concurrency 10 `
   --execution-timeout 60s `
   --service-account-id $SERVICE_ACCOUNT_ID `
-  --environment "ENV=$ENV_NAME" `
+  --environment "ENVIRONMENT=$ENV_NAME" `
   --environment "HTTP_PORT=:8080" `
+  --environment "USE_LOCAL_DB=$USE_LOCAL_DB" `
   --secret "environment-variable=JWT_SECRET,id=$SECRET_ID,key=JWT_SECRET" `
   --secret "environment-variable=ENCRYPTION_KEY,id=$SECRET_ID,key=ENCRYPTION_KEY" `
   --secret "environment-variable=DATABASE_URL,id=$SECRET_ID,key=DATABASE_URL" `

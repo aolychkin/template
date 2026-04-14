@@ -13,7 +13,7 @@
 - [ ] 2.1 Запустить скрипт установки:
   - macOS/Linux: `bash scripts/install-tools.sh`
   - Windows: `powershell scripts/install-tools.ps1` (создаётся в задаче 2.1b если отсутствует)
-- [ ] 2.1b (Windows) Если `scripts/install-tools.ps1` не существует — создать PowerShell-версию `scripts/install-tools.sh`
+- [ ] 2.1b (Windows) Если `scripts/install-tools.ps1` устарел или требует обновления — обновить PowerShell-версию на основе `scripts/install-tools.sh`
 - [ ] 2.2 Скрипт автоматически проверит и предложит установить:
   - (macOS) Homebrew
   - Node.js (v20+)
@@ -68,7 +68,7 @@
 ## Notes
 
 - Эта спека выполняется ПЕРВОЙ, до всех остальных
-- `scripts/install-tools.ps1` может отсутствовать в шаблоне — создаётся при первом запуске на Windows (задача 2.1b)
+- `scripts/install-tools.ps1` уже включён в шаблон — обновляется при необходимости на Windows (задача 2.1b)
 - PowerShell скрипты деплоя (задачи 4.x) создаются для ВСЕХ ОС — хранятся в репозитории
 - Taskfile :win задачи (задачи 5.x) создаются для ВСЕХ ОС — хранятся в репозитории
 - Команды установки зависят от ОС: brew (macOS), apt/snap (Linux), winget/choco (Windows)

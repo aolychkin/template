@@ -72,8 +72,9 @@ yc serverless container revision deploy \
   --concurrency 10 \
   --execution-timeout 60s \
   --service-account-id $SERVICE_ACCOUNT_ID \
-  --environment ENV=stage \
+  --environment ENVIRONMENT=stage \
   --environment HTTP_PORT=:8080 \
+  --environment USE_LOCAL_DB=true \
   --folder-id $FOLDER_ID
 
 # Разрешаем публичный доступ

@@ -47,7 +47,7 @@ if [[ "$RUN_MIGRATIONS" == "да" || "$RUN_MIGRATIONS" == "yes" || "$RUN_MIGRATI
     if [ -z "$DB_URL" ]; then
         echo "⚠️  Не удалось получить DATABASE_URL из Lockbox"
     else
-        DATABASE_URL="$DB_URL" ENV=$ENV go run cmd/migrate/main.go
+        DATABASE_URL="$DB_URL" ENVIRONMENT=$ENV go run cmd/migrate/main.go
         echo "✅ Миграции завершены"
     fi
 else
@@ -89,8 +89,9 @@ yc serverless container revision deploy \
   --concurrency 10 \
   --execution-timeout 60s \
   --service-account-id $SERVICE_ACCOUNT_ID \
-  --environment ENV=$ENV \
+  --environment ENVIRONMENT=$ENV \
   --environment HTTP_PORT=:8080 \
+  --environment USE_LOCAL_DB=$([ "$ENV" = "stage" ] && echo "true" || echo "false") \
   --secret environment-variable=JWT_SECRET,id=$SECRET_ID,key=JWT_SECRET \
   --secret environment-variable=ENCRYPTION_KEY,id=$SECRET_ID,key=ENCRYPTION_KEY \
   --secret environment-variable=DATABASE_URL,id=$SECRET_ID,key=DATABASE_URL \

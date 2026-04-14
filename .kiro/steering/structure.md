@@ -19,6 +19,7 @@ project/
 ├── scripts/             # Скрипты установки инструментов
 │   ├── install-tools.sh   # macOS/Linux
 │   └── install-tools.ps1  # Windows
+├── .editorconfig        # Единообразие форматирования
 ├── docker-compose.yml   # Локальная БД (только после спеки 3.2, не в git)
 ├── Taskfile.yml         # Корневой таск-раннер (только после спеки 3.2, не в git)
 └── .kiro/

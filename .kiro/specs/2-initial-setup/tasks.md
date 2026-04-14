@@ -18,7 +18,7 @@
   - `frontend/.env.example` (поле `VITE_APP_NAME`)
   - `frontend/src/shared/config/.env.example` (комментарии и `VITE_APP_NAME`)
   - `frontend/src/shared/config/.env.development` (поле `VITE_APP_NAME`)
-  - `.kiro/steering/yc-operations.md` (все `my-project-*` плейсхолдеры)
+  - `.kiro/steering/yc-operations.md` (все `my-project-*` плейсхолдеры и `my_project` / `my_project_prod` в секции PostgreSQL)
 - [ ] 1.3 Заменить `[PROJECT_NAME]` на реальное имя в:
   - `frontend/index.html` (тег `<title>`)
   - `frontend/index.production.html` (тег `<title>`)
@@ -35,6 +35,7 @@
 - [ ] 1.8 В `.kiro/steering/structure.md`:
   - Заменить `[PROJECT_NAME]` в заголовке `# Project Structure - [PROJECT_NAME]` на реальное имя
 - [ ] 1.9 Обновить `backend/go.mod` — имя модуля `template` → новое имя. **ВАЖНО:** это потребует обновления ВСЕХ Go импортов (`template/internal/...` → `{новое-имя}/internal/...`) во всех `.go` файлах проекта (~20+ файлов)
+- [ ] 1.10 Обновить `go_package` в proto файлах (`contract/proto/*//*.proto`): `template/gen/go/...` → `{новое-имя}/gen/go/...`
 
 ### 2. Установка зависимостей
 
@@ -65,6 +66,11 @@
 - [ ] 3.1b Проверить что Go модуль `template` переименован:
   ```bash
   grep -r '"template/internal' --include="*.go" backend/
+  ```
+  Должно быть 0 совпадений после переименования
+- [ ] 3.1c Проверить что proto файлы обновлены:
+  ```bash
+  grep -r 'template/' --include="*.proto" contract/
   ```
   Должно быть 0 совпадений после переименования
 - [ ] 3.2 Проверить backend:

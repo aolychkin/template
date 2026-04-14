@@ -35,6 +35,8 @@ description: Yandex Cloud operations, resource IDs, and common YC CLI commands. 
 | my_project | Stage (тестовая) |
 | my_project_prod | Production |
 
+> **Именование:** PostgreSQL не поддерживает дефисы в именах баз. Используйте underscore: `my-project` → `my_project`. При переименовании проекта (спека 2) замените `my_project` на `{project_name}` с underscore.
+
 Хост: `<!-- TODO: Managed PostgreSQL host -->`
 
 ### Lockbox
@@ -135,13 +137,15 @@ yc lockbox payload get my-project-secrets --format json | jq -r '.entries[] | se
 ## Логика выбора БД (config.go)
 
 ```
-ENV=stage     → USE_LOCAL_DB=true  → DATABASE_URL_LOCAL (stage)
-ENV=production → USE_LOCAL_DB=false → DATABASE_URL (production)
+USE_LOCAL_DB=true  (stage)      → DATABASE_URL_LOCAL (stage БД)
+USE_LOCAL_DB=false (production) → DATABASE_URL (production БД)
 ```
+
+**Важно:** `USE_LOCAL_DB` передаётся как env variable при деплое контейнера (см. `update-container.sh`). Для stage = `true`, для production = `false`.
 
 ## Важно помнить
 
-1. **HTTP_PORT=:8080** обязателен для YC Serverless Containers
+1. **HTTP_PORT=:8080** передаётся при деплое → config.go использует его вместо SERVER_PORT (приоритет HTTP_PORT > SERVER_PORT)
 2. **Website settings** нужны для SPA routing в S3
 3. **Lockbox версии** - после обновления секрета создаётся новая версия, контейнер нужно передеплоить
 4. **Миграции** - не должны падать с panic на существующих таблицах

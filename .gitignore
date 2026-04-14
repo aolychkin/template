@@ -12,3 +12,7 @@ Thumbs.db
 # Kiro settings (per-developer, not shared)
 .kiro/settings/
 
+# Local development (создаётся спекой 3.2, не хранится в шаблоне)
+# docker-compose.yml
+# Taskfile.yml
+

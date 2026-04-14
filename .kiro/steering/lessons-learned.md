@@ -22,10 +22,10 @@ TODO: Заполнять по мере развития проекта.
 
 ### Scopes (переиспользуемые фильтры)
 
-**Файл:** `internal/storage/postgres/scopes.go`
+<!-- TODO: Создать internal/storage/postgres/scopes.go при добавлении фильтрации -->
 
 ```go
-// Пример: Активные пользователи
+// Пример: Активные пользователи (internal/storage/postgres/scopes.go)
 func ActiveUsersScope(db *gorm.DB) *gorm.DB {
     return db.Where("status = ?", "active")
 }
@@ -81,7 +81,7 @@ Serverless контейнеры (YC Serverless Containers) имеют cold start
 ```bash
 # Миграции запускаются ОТДЕЛЬНО, не при каждом cold start
 task migrate              # stage (по умолчанию)
-ENV=production task migrate  # production
+ENVIRONMENT=production task migrate  # production
 ```
 
 **ВАЖНО:** Запускай миграции ПЕРЕД деплоем, не во время runtime!
@@ -137,6 +137,14 @@ output: {
 ---
 
 ## 🌐 gRPC-Web
+
+### Proto генерация: два плагина
+
+Для генерации TypeScript кода используются два разных плагина:
+- `ts-protoc-gen` (npm, `contract/node_modules/.bin/protoc-gen-ts`) — генерирует TypeScript типы (`*_pb.d.ts`) и JS код (`*_pb.js`)
+- `protoc-gen-grpc-web` (глобальный, устанавливается через brew/curl) — генерирует gRPC-Web клиент (`*ServiceClientPb.ts`)
+
+Оба нужны: первый для типов и сериализации, второй для клиентского кода. `ts-protoc-gen` устанавливается через `cd contract && yarn install`, `protoc-gen-grpc-web` — через `install-tools.sh`.
 
 ### Proto wrapper pattern
 ```typescript
@@ -389,6 +397,25 @@ if getEnv("USE_LOCAL_DB", "false") == "true" {
 **Как работает:**
 - `USE_LOCAL_DB=true` (stage) → использует `DATABASE_URL_LOCAL`
 - `USE_LOCAL_DB=false` (production) → использует `DATABASE_URL`
+- `USE_LOCAL_DB` передаётся как env variable при деплое (см. `update-container.sh`)
+
+### Переключение порта для YC (HTTP_PORT)
+
+**Механизм:** Локально сервер слушает порт 44044 (SERVER_PORT), в YC — 8080 (HTTP_PORT).
+
+**Как работает в `config.go`:**
+```go
+// HTTP_PORT (формат ":8080") имеет приоритет над SERVER_PORT
+serverPort := getEnv("SERVER_PORT", "44044")
+if httpPort := os.Getenv("HTTP_PORT"); httpPort != "" {
+    serverPort = strings.TrimPrefix(httpPort, ":")
+}
+```
+
+**Где задаётся:**
+- Локально: `SERVER_PORT=44044` (из `.env` или дефолт)
+- YC: `HTTP_PORT=:8080` (передаётся в `--environment` при деплое контейнера)
+- Dockerfile: `EXPOSE 8080` (информационный, не влияет на runtime)
 
 ---
 
