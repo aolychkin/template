@@ -42,7 +42,7 @@ allowedOrigins := map[string]bool{
 - [x] **Пароли:** Bcrypt (cost 12)
 - [x] **Токены:** SHA256 для refresh, JWT для access
 - [x] **Сессии:** JWT (15 мин) + refresh (7 дней)
-- [x] **Блокировка:** Account lockout (5 попыток, 15 мин)
+- [x] **Блокировка:** Account lockout (5 попыток, 30 мин)
 - [x] **Rate limiting:** 100 req/min по IP + userID
 - [x] **CORS:** Whitelist + preflight обработка
 - [x] **Headers:** CSP, X-Frame-Options, Permissions-Policy

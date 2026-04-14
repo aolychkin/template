@@ -126,6 +126,8 @@ docker-compose.yml
 - `backend/Taskfile.yml` — существующие задачи (dev, seed, migrate) не трогаем
 - `frontend/.env.example` — уже настроен на localhost
 
+**Примечание:** `task seed` работает локально без явного DATABASE_URL потому что `cmd/seed/main.go` вызывает `godotenv.Load()`. Задача `migrate:local` использует Taskfile `dotenv` для той же цели. Оба подхода читают `backend/.env` — результат одинаковый.
+
 ## Correctness Properties
 
 ### Property 1: Локальная связность

@@ -62,6 +62,9 @@
   - **Task** (go-task) — таск-раннер для backend, frontend, contract
   - **Docker** и **Docker Compose** — для контейнеризации
   - **Protobuf compiler** (protoc) — для генерации gRPC кода
+  - **protoc-gen-go** — Go плагин для protoc (генерация Go кода из proto)
+  - **protoc-gen-go-grpc** — Go gRPC плагин для protoc
+  - **protoc-gen-grpc-web** — gRPC-Web плагин для protoc (генерация TypeScript кода)
   - **buf** — линтер и генератор proto
   - **jq** — парсер JSON (используется в deployment скриптах)
   - **YC CLI** — Yandex Cloud CLI (опционально, только для yc-setup)

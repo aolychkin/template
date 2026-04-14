@@ -65,6 +65,10 @@
   ```
   VITE_GRPC_HOST=https://<API_GATEWAY_URL>
   ```
+- [ ] 5.1b Обновить CSP в HTML файлах — заменить `YOUR_*_API_GATEWAY` на реальные URL:
+  - `frontend/index.html` — заменить `YOUR_STAGE_API_GATEWAY` на реальный stage URL
+  - `frontend/index.stage.html` — заменить `YOUR_STAGE_API_GATEWAY` на реальный stage URL
+  - `frontend/index.production.html` — заменить `YOUR_PROD_API_GATEWAY` на реальный production URL
 - [ ] 5.2 Обновить API URL в `.env.stage` (если используется отдельный файл)
 - [ ] 5.3 Задеплоить frontend:
   ```bash

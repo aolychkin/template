@@ -19,8 +19,8 @@ project/
 ├── scripts/             # Скрипты установки инструментов
 │   ├── install-tools.sh   # macOS/Linux
 │   └── install-tools.ps1  # Windows
-├── docker-compose.yml   # Локальная БД (генерируется при local-development-support)
-├── Taskfile.yml         # Корневой таск-раннер (local:up, local:down, local:reset)
+├── docker-compose.yml   # Локальная БД (только после спеки 3.2, не в git)
+├── Taskfile.yml         # Корневой таск-раннер (только после спеки 3.2, не в git)
 └── .kiro/
     ├── specs/           # Спецификации (1-environment-setup, 2-initial-setup, 3.1/3.2)
     ├── settings/        # Настройки окружения (environment.json, не в git)
@@ -34,11 +34,14 @@ internal/
 ├── domain/models/       # GORM модели
 ├── grpc/
 │   ├── server/          # gRPC server setup
-│   ├── interceptors/    # Auth, validation, logging
 │   └── service/         # Handlers
 ├── services/service/    # Бизнес-логика
 ├── storage/postgres/    # БД операции
-├── lib/                 # Утилиты (auth, validate, errutil)
+├── lib/                 # Утилиты
+│   ├── auth/            # JWT, bcrypt, SHA256
+│   ├── validate/        # Бизнес-правила
+│   ├── errutil/         # Стратегии обработки ошибок
+│   └── interceptors/    # gRPC middleware (auth, validation, timeout, etc.)
 └── config/              # Конфигурация
 ```
 

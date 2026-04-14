@@ -5,10 +5,11 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
-const defaultJWTSecret = "change-me-in-production"
+const defaultJWTSecret = "change-me-in-production-use-32-chars-min"
 
 // Config содержит конфигурацию приложения
 type Config struct {
@@ -59,7 +60,7 @@ func Load() *Config {
 		DatabaseURL: databaseURL,
 
 		// JWT
-		JWTSecret:            getEnv("JWT_SECRET", "change-me-in-production"),
+		JWTSecret:            getEnv("JWT_SECRET", "change-me-in-production-use-32-chars-min"),
 		AccessTokenDuration:  getDurationEnv("ACCESS_TOKEN_DURATION", 15*time.Minute),
 		RefreshTokenDuration: getDurationEnv("REFRESH_TOKEN_DURATION", 7*24*time.Hour),
 
@@ -136,21 +137,12 @@ func getDurationEnv(key string, defaultValue time.Duration) time.Duration {
 
 func getSliceEnv(key string, defaultValue []string) []string {
 	if value := os.Getenv(key); value != "" {
-		// Simple comma-separated parsing
 		var result []string
-		current := ""
-		for _, char := range value {
-			if char == ',' {
-				if current != "" {
-					result = append(result, current)
-					current = ""
-				}
-			} else {
-				current += string(char)
+		for _, item := range strings.Split(value, ",") {
+			trimmed := strings.TrimSpace(item)
+			if trimmed != "" {
+				result = append(result, trimmed)
 			}
-		}
-		if current != "" {
-			result = append(result, current)
 		}
 		if len(result) > 0 {
 			return result

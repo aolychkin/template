@@ -46,6 +46,9 @@ func main() {
 	log := logger.New(logLevel)
 	slog.SetDefault(log)
 
+	// Validate config (panics in production with default JWT secret)
+	cfg.Validate(log)
+
 	log.Info("starting server",
 		"env", cfg.Environment,
 		"port", cfg.ServerPort,

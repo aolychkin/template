@@ -98,6 +98,7 @@
 1. WHEN разработчик запускает `deploy-frontend.sh` THE System SHALL собрать production bundle
 2. WHEN разработчик запускает `deploy-frontend.sh` THE System SHALL загрузить файлы в S3 bucket
 3. WHEN разработчик обновляет `.env.stage` THE System SHALL содержать правильный `VITE_GRPC_HOST` (URL API Gateway)
+4. WHEN разработчик обновляет CSP в HTML файлах THE System SHALL заменить `YOUR_*_API_GATEWAY` плейсхолдеры на реальные URL API Gateway (иначе браузер заблокирует запросы к backend)
 
 ### Требование 8: Проверка работоспособности
 

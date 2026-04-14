@@ -77,11 +77,12 @@ if ! check_tool "Go" "go" "version"; then
     if [[ "$OS" == "macos" ]]; then
         brew install go
     else
+        GO_TARGET_VERSION="1.22.5"
         sudo snap install go --classic 2>/dev/null || {
-            wget -q https://go.dev/dl/go1.22.5.linux-amd64.tar.gz
+            wget -q "https://go.dev/dl/go${GO_TARGET_VERSION}.linux-amd64.tar.gz"
             sudo rm -rf /usr/local/go
-            sudo tar -C /usr/local -xzf go1.22.5.linux-amd64.tar.gz
-            rm go1.22.5.linux-amd64.tar.gz
+            sudo tar -C /usr/local -xzf "go${GO_TARGET_VERSION}.linux-amd64.tar.gz"
+            rm "go${GO_TARGET_VERSION}.linux-amd64.tar.gz"
             export PATH=$PATH:/usr/local/go/bin
             echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
         }
@@ -142,9 +143,92 @@ if ! check_tool "jq" "jq"; then
     fi
 fi
 
+# Go protobuf plugins (needed for proto generation)
+echo ""
+echo "--- Checking Go protobuf plugins ---"
+echo ""
+
+if ! command -v protoc-gen-go &>/dev/null; then
+    echo "[MISSING] protoc-gen-go — installing..."
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    MISSING=$((MISSING + 1))
+else
+    echo "[OK] protoc-gen-go"
+    INSTALLED=$((INSTALLED + 1))
+fi
+
+if ! command -v protoc-gen-go-grpc &>/dev/null; then
+    echo "[MISSING] protoc-gen-go-grpc — installing..."
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    MISSING=$((MISSING + 1))
+else
+    echo "[OK] protoc-gen-go-grpc"
+    INSTALLED=$((INSTALLED + 1))
+fi
+
+# protoc-gen-grpc-web (needed for frontend proto generation)
+if ! command -v protoc-gen-grpc-web &>/dev/null; then
+    echo "[MISSING] protoc-gen-grpc-web — installing..."
+    if [[ "$OS" == "macos" ]]; then
+        brew install protoc-gen-grpc-web
+    else
+        GRPC_WEB_VERSION="2.0.2"
+        curl -sSL "https://github.com/nicholasgasior/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-linux-x86_64" -o /tmp/protoc-gen-grpc-web 2>/dev/null || {
+            echo "[WARN] Could not auto-install protoc-gen-grpc-web"
+            echo "       Install manually: https://github.com/grpc/grpc-web/releases"
+        }
+        if [ -f /tmp/protoc-gen-grpc-web ]; then
+            sudo mv /tmp/protoc-gen-grpc-web /usr/local/bin/protoc-gen-grpc-web
+            sudo chmod +x /usr/local/bin/protoc-gen-grpc-web
+        fi
+    fi
+    MISSING=$((MISSING + 1))
+else
+    echo "[OK] protoc-gen-grpc-web"
+    INSTALLED=$((INSTALLED + 1))
+fi
+
+echo ""
+echo "--- Checking minimum versions ---"
+echo ""
+
+VERSION_OK=true
+
+# Check Node.js >= 20
+if command -v node &>/dev/null; then
+    NODE_MAJOR=$(node --version | sed 's/v//' | cut -d. -f1)
+    if [ "$NODE_MAJOR" -lt 20 ]; then
+        echo "[WARN] Node.js version $(node --version) is below minimum (v20+)"
+        VERSION_OK=false
+    else
+        echo "[OK] Node.js $(node --version) >= v20"
+    fi
+fi
+
+# Check Go >= 1.22
+if command -v go &>/dev/null; then
+    GO_VERSION=$(go version | sed -E 's/.*go([0-9]+\.[0-9]+).*/\1/')
+    GO_MAJOR=$(echo "$GO_VERSION" | cut -d. -f1)
+    GO_MINOR=$(echo "$GO_VERSION" | cut -d. -f2)
+    if [ "$GO_MAJOR" -lt 1 ] || ([ "$GO_MAJOR" -eq 1 ] && [ "$GO_MINOR" -lt 22 ]); then
+        echo "[WARN] Go version $GO_VERSION is below minimum (1.22+)"
+        VERSION_OK=false
+    else
+        echo "[OK] Go $GO_VERSION >= 1.22"
+    fi
+fi
+
 echo ""
 echo "========================================"
 echo "  Done! $INSTALLED already installed, $MISSING were installed"
 echo "========================================"
+echo ""
+
+if [ "$VERSION_OK" = false ]; then
+    echo "⚠️  Some tools have versions below minimum requirements."
+    echo "   Please update them before proceeding."
+else
+    echo "✅ All version requirements met."
+fi
 echo ""
 echo "Next step: run initial-setup spec"

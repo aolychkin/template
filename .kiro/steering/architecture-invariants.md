@@ -90,15 +90,15 @@ s.storage.Save(ctx, data)
 **Порядок interceptors ФИКСИРОВАН и НЕ МОЖЕТ меняться:**
 
 ```
-1. Correlation (request ID)
-2. Timeout (safety net)
-3. Auth (user identification)
-4. RateLimit (requires userID from Auth)
-5. Validation (ctx, req checks)
+1. Validation (ctx, req checks)
+2. Correlation (request ID)
+3. Timeout (safety net)
+4. Auth (user identification)
+5. RateLimit (requires userID from Auth)
 6. Business Logic
 ```
 
-**Почему:** RateLimit зависит от userID, который устанавливает Auth.
+**Почему:** RateLimit зависит от userID, который устанавливает Auth. Validation первым отсекает невалидные запросы.
 
 ---
 
@@ -123,16 +123,16 @@ cache := make(map[string]*entry)  // без лимита!
 ---
 
 ### 7. Graceful Shutdown Order
-**gRPC GracefulStop() ПЕРЕД HTTP Shutdown().**
+**RateLimiter.Stop() ПЕРЕД gRPC GracefulStop() ПЕРЕД HTTP Close().**
 
 ```go
-// ✅ Правильный порядок
-grpcServer.GracefulStop()  // Сначала gRPC
-server.Shutdown(ctx)        // Потом HTTP
+// ✅ Правильный порядок (см. server.go GracefulStop)
 rateLimiter.Stop()          // Background goroutines
+grpcServer.GracefulStop()   // Ждёт завершения текущих запросов
+httpServer.Close()          // Закрываем HTTP
 ```
 
-**Почему:** gRPC GracefulStop ждёт завершения текущих запросов.
+**Почему:** gRPC GracefulStop ждёт завершения текущих запросов, rate limiter должен быть остановлен до этого.
 
 ---
 

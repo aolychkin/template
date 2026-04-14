@@ -67,10 +67,10 @@ tasks:
       - ./deployment/scripts/update-container.sh
 
   kill:
-    desc: Остановка backend (освобождение портов)
+    desc: Остановка backend (освобождение портов 44044 и 8080)
     cmds:
-      - lsof -ti:8080 | xargs kill -9 2>/dev/null || echo "Port 8080 already free"
       - lsof -ti:44044 | xargs kill -9 2>/dev/null || echo "Port 44044 already free"
+      - lsof -ti:8080 | xargs kill -9 2>/dev/null || echo "Port 8080 already free"
 
   migrate:
     desc: Запуск миграций БД (требует DATABASE_URL)

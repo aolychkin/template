@@ -28,34 +28,32 @@ inclusion: always
 bash scripts/install-tools.sh        # macOS/Linux
 # powershell scripts/install-tools.ps1  # Windows
 
-# Frontend (локально)
-cd frontend && task dev    # :3000
-
-# Backend (локально, если local-development-support)
-cd backend && task dev     # :44044
-
 # Proto
 cd contract && task generate
 
-# Локальная БД (если local-development-support)
+# Frontend
+cd frontend && task dev    # :3000
+
+# Backend
+cd backend && task dev     # :44044
+
+# --- Локальная разработка (после спеки 3.2) ---
 task local:up              # запуск PostgreSQL
 task local:down            # остановка
 task local:reset           # пересоздание с нуля
+cd backend && task migrate:local   # миграции (из .env)
+cd backend && task seed            # тестовые данные
 
-# Миграции
-cd backend && task migrate:local   # локальная БД (из .env)
+# --- YC окружение (после спеки 3.1) ---
 cd backend && task migrate:stage   # stage через Lockbox
 cd backend && task migrate:prod    # production (ОСТОРОЖНО!)
-
-# Деплой backend (YC)
-cd backend && task deploy  # stage или production
-
-# Seed
-cd backend && task seed         # локальная БД
-cd backend && task seed:stage   # stage через Lockbox
-cd backend && task seed:prod    # production (ОСТОРОЖНО!)
+cd backend && task deploy          # деплой в YC
+cd backend && task seed:stage      # seed stage через Lockbox
+cd backend && task seed:prod       # seed production (ОСТОРОЖНО!)
 ```
 
+> Команды из секции "Локальная разработка" доступны только после выполнения спеки 3.2
+> Команды из секции "YC окружение" доступны только после выполнения спеки 3.1
 > Для Windows: .sh скрипты имеют .ps1 аналоги рядом
 
 ## Critical Rules

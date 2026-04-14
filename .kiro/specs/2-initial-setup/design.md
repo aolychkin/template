@@ -33,20 +33,31 @@ initial-setup (общая инициализация)
 | `backend/deployment/api-gateway/production.yaml` | `my-project-frontend-prod`, `my-project-sa`, `my-project-api` |
 | `backend/deployment/DEPLOY.md` | `my-project-secrets`, `my-project-api`, `my-project-gateway-*` |
 | `backend/deployment/monitoring/alerting-rules.yml` | `service: my-project` (5 мест) |
+| `backend/deployment/monitoring/alertmanager-telegram.yml` | `channel_names: ['my-project']` (2 места) |
 | `backend/Taskfile.yml` | `LOCKBOX_SECRET: my-project-secrets` |
 | `frontend/package.json` | `"name": "my-project-frontend"` |
 | `frontend/deployment/scripts/deploy-frontend.sh` | `PROJECT_NAME="my-project"` |
 | `frontend/deployment/scripts/deploy-frontend.ps1` | `$PROJECT_NAME = "my-project"` |
-| `frontend/src/shared/config/.env.example` | Комментарии с `my-project-api-*` |
+| `frontend/.env.example` | `VITE_APP_NAME=my-project` |
+| `frontend/src/shared/config/.env.example` | `VITE_APP_NAME=my-project`, комментарии с `my-project-api-*` |
+| `frontend/src/shared/config/.env.development` | `VITE_APP_NAME=my-project` |
 | `.kiro/steering/product.md` | `[PROJECT_NAME]` в заголовке |
 | `.kiro/steering/tech.md` | `[PROJECT_NAME]` в заголовке |
 | `.kiro/steering/structure.md` | `[PROJECT_NAME]` в заголовке |
+| `frontend/index.html` | `<title>[PROJECT_NAME]</title>` |
+| `frontend/index.production.html` | `<title>[PROJECT_NAME]</title>` |
+| `frontend/index.stage.html` | `<title>[PROJECT_NAME] (Stage)</title>` |
 | `.kiro/steering/yc-operations.md` | Все `my-project-*` плейсхолдеры |
+| `backend/go.mod` | Имя модуля `template` → новое имя |
+| Все `*.go` файлы в `backend/` | Импорты `template/internal/...` → `{новое-имя}/internal/...` (~20+ файлов) |
 
 ## Correctness Properties
 
 ### Property 1: Полнота переименования
 *Для любого* файла в проекте, строка `my-project` НЕ должна присутствовать после переименования (кроме README с инструкциями шаблона).
+
+### Property 1b: Полнота переименования Go модуля
+*Для любого* `.go` файла в проекте, строка `"template/internal` НЕ должна присутствовать после переименования модуля.
 
 **Validates:** Requirements 1.1
 
@@ -58,6 +69,6 @@ initial-setup (общая инициализация)
 ## Testing Strategy
 
 ### Automated Checks
-- `grep -r "my-project" --include="*.go" --include="*.ts" --include="*.sh" --include="*.yaml" --include="*.yml" --include="*.json"` — не должно быть совпадений после переименования
+- `grep -r "my-project" --include="*.go" --include="*.ts" --include="*.sh" --include="*.yaml" --include="*.yml" --include="*.json" --include=".env*"` — не должно быть совпадений после переименования
 - `go build -o /dev/null ./cmd/server` — backend компилируется
 - `yarn type-check` — frontend компилируется

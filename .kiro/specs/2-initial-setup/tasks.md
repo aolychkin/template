@@ -13,21 +13,28 @@
   - `backend/deployment/api-gateway/production.yaml`
   - `backend/deployment/DEPLOY.md`
   - `backend/deployment/monitoring/alerting-rules.yml` (поле `service:`, 5 мест)
+  - `backend/deployment/monitoring/alertmanager-telegram.yml` (поле `channel_names`, 2 места)
   - `frontend/deployment/scripts/deploy-frontend.sh` и `.ps1`
-  - `frontend/src/shared/config/.env.example` (комментарии)
+  - `frontend/.env.example` (поле `VITE_APP_NAME`)
+  - `frontend/src/shared/config/.env.example` (комментарии и `VITE_APP_NAME`)
+  - `frontend/src/shared/config/.env.development` (поле `VITE_APP_NAME`)
   - `.kiro/steering/yc-operations.md` (все `my-project-*` плейсхолдеры)
-- [ ] 1.3 Обновить `backend/Taskfile.yml` — переменная `LOCKBOX_SECRET`
-- [ ] 1.4 Обновить `frontend/package.json` — поле `name`
-- [ ] 1.5 В `.kiro/steering/product.md`:
+- [ ] 1.3 Заменить `[PROJECT_NAME]` на реальное имя в:
+  - `frontend/index.html` (тег `<title>`)
+  - `frontend/index.production.html` (тег `<title>`)
+  - `frontend/index.stage.html` (тег `<title>`)
+- [ ] 1.4 Обновить `backend/Taskfile.yml` — переменная `LOCKBOX_SECRET`
+- [ ] 1.5 Обновить `frontend/package.json` — поле `name`
+- [ ] 1.6 В `.kiro/steering/product.md`:
   - Заменить `[PROJECT_NAME]` в заголовке на реальное имя
   - Заполнить секцию `## Purpose` — описание продукта
   - Заполнить `## Scale & Context` — масштаб и аудитория
   - Обновить `## Key Features` если нужно
-- [ ] 1.6 В `.kiro/steering/tech.md`:
+- [ ] 1.7 В `.kiro/steering/tech.md`:
   - Заменить `[PROJECT_NAME]` в заголовке `# Tech Stack - [PROJECT_NAME]` на реальное имя
-- [ ] 1.7 В `.kiro/steering/structure.md`:
+- [ ] 1.8 В `.kiro/steering/structure.md`:
   - Заменить `[PROJECT_NAME]` в заголовке `# Project Structure - [PROJECT_NAME]` на реальное имя
-- [ ] 1.8 Обновить `backend/go.mod` — имя модуля (если нужно)
+- [ ] 1.9 Обновить `backend/go.mod` — имя модуля `template` → новое имя. **ВАЖНО:** это потребует обновления ВСЕХ Go импортов (`template/internal/...` → `{новое-имя}/internal/...`) во всех `.go` файлах проекта (~20+ файлов)
 
 ### 2. Установка зависимостей
 
@@ -50,11 +57,16 @@
 
 ### 3. Проверка компиляции
 
-- [ ] 3.1 Проверить что `my-project` нигде не осталось:
+- [ ] 3.1 Проверить что `my-project`, `my_project` и `[PROJECT_NAME]` нигде не осталось:
   ```bash
-  grep -r "my-project" --include="*.go" --include="*.ts" --include="*.sh" --include="*.ps1" --include="*.yaml" --include="*.yml" --include="*.json" --include="*.md" . | grep -v node_modules | grep -v ".git/"
+  grep -rn "my-project\|my_project\|\[PROJECT_NAME\]" --include="*.go" --include="*.ts" --include="*.sh" --include="*.ps1" --include="*.yaml" --include="*.yml" --include="*.json" --include="*.md" --include=".env*" --include="*.html" . | grep -v node_modules | grep -v ".git/"
   ```
   Допустимые исключения: README.md (инструкции шаблона), спеки (документация)
+- [ ] 3.1b Проверить что Go модуль `template` переименован:
+  ```bash
+  grep -r '"template/internal' --include="*.go" backend/
+  ```
+  Должно быть 0 совпадений после переименования
 - [ ] 3.2 Проверить backend:
   ```bash
   cd backend && go build -o /dev/null ./cmd/server

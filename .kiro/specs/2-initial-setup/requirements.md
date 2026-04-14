@@ -36,7 +36,8 @@
 - 1.1.2 WHEN разработчик обновляет `package.json` THE System SHALL содержать правильное имя пакета
 - 1.1.3 WHEN разработчик обновляет `backend/Taskfile.yml` THE System SHALL содержать правильное имя в переменной `LOCKBOX_SECRET`
 - 1.1.4 WHEN разработчик обновляет deployment скрипты (.sh И .ps1) THE System SHALL содержать правильное имя в переменной `PROJECT_NAME`
-- 1.1.5 WHEN разработчик обновляет `backend/go.mod` THE System SHALL содержать правильное имя модуля (если нужно)
+- 1.1.5 WHEN разработчик обновляет `backend/go.mod` THE System SHALL обновить имя модуля с `template` на новое имя проекта, а также обновить ВСЕ Go импорты (`template/internal/...` → `{новое-имя}/internal/...`) во всех `.go` файлах
+- 1.1.6 WHEN разработчик обновляет `frontend/.env.example` THE System SHALL заменить `VITE_APP_NAME=my-project` на новое имя проекта
 
 ### 1.2 Обновление steering-файлов
 

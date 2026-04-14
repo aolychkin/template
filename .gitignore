@@ -9,3 +9,6 @@ Thumbs.db
 *.swo
 *~
 
+# Kiro settings (per-developer, not shared)
+.kiro/settings/
+

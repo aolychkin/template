@@ -89,8 +89,8 @@ cd frontend && task dev              # frontend :3000
 ├── scripts/             # Скрипты установки инструментов
 │   ├── install-tools.sh   # macOS/Linux
 │   └── install-tools.ps1  # Windows
-├── docker-compose.yml   # Локальная БД (создаётся при local-development-support)
-├── Taskfile.yml         # Корневой таск-раннер (local:up/down/reset)
+├── docker-compose.yml   # Локальная БД (создаётся спекой 3.2, не в git)
+├── Taskfile.yml         # Корневой таск-раннер (создаётся спекой 3.2, не в git)
 └── .kiro/
     ├── specs/           # Спеки настройки (1, 2, 3.1, 3.2)
     ├── settings/        # Настройки окружения (не в git)
@@ -104,26 +104,27 @@ cd frontend && task dev              # frontend :3000
 bash scripts/install-tools.sh        # macOS/Linux
 powershell scripts/install-tools.ps1 # Windows
 
-# Локальная БД
-task local:up       # запуск PostgreSQL
-task local:down     # остановка
-task local:reset    # пересоздание с нуля
-
-# Backend
-cd backend && task dev              # локальный сервер :44044
-cd backend && task deploy           # деплой в YC
+# Proto
+cd contract && task generate
 
 # Frontend
 cd frontend && task dev             # :3000
-cd frontend && task deploy          # деплой в YC S3
 
-# Миграции
-cd backend && task migrate:local    # локальная БД
+# Backend
+cd backend && task dev              # локальный сервер :44044
+
+# --- Локальная разработка (после спеки 3.2) ---
+task local:up                       # запуск PostgreSQL
+task local:down                     # остановка
+task local:reset                    # пересоздание с нуля
+cd backend && task migrate:local    # миграции (из .env)
+cd backend && task seed             # тестовые данные
+
+# --- YC окружение (после спеки 3.1) ---
 cd backend && task migrate:stage    # stage (Lockbox)
 cd backend && task migrate:prod     # production (ОСТОРОЖНО!)
-
-# Proto
-cd contract && task generate
+cd backend && task deploy           # деплой в YC
+cd frontend && task deploy          # деплой в YC S3
 
 # Тесты
 cd backend && go test -v ./...
@@ -137,7 +138,7 @@ cd frontend && yarn type-check && yarn test
 - Yarn
 - Docker + Docker Compose
 - [Task](https://taskfile.dev/) (go-task)
-- [protoc](https://github.com/protocolbuffers/protobuf/releases)
+- [protoc](https://github.com/protocolbuffers/protobuf/releases) + плагины (protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-web)
 - [buf](https://buf.build/)
 - [YC CLI](https://cloud.yandex.ru/docs/cli/quickstart) (только для yc-setup)
 

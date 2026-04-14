@@ -20,6 +20,8 @@ environment-setup
     │   ├── Task (go-task)
     │   ├── Docker + Docker Compose
     │   ├── protoc
+    │   ├── protoc-gen-go + protoc-gen-go-grpc (Go плагины)
+    │   ├── protoc-gen-grpc-web (gRPC-Web плагин)
     │   ├── buf
     │   ├── jq
     │   └── YC CLI (опционально)
@@ -88,7 +90,7 @@ corepack enable && corepack prepare yarn@stable --activate
 
 # Go
 sudo snap install go --classic
-# или: wget https://go.dev/dl/go1.22.linux-amd64.tar.gz
+# или: wget https://go.dev/dl/go1.22.x.linux-amd64.tar.gz (обновить версию при необходимости)
 
 # Task
 sudo snap install task --classic
@@ -168,6 +170,7 @@ buf --version     # любая
 
 | Bash (.sh) | PowerShell (.ps1) |
 |-----------|-------------------|
+| `scripts/install-tools.sh` | `scripts/install-tools.ps1` (создаётся при настройке Windows) |
 | `backend/deployment/scripts/1-initial-deploy.sh` | `backend/deployment/scripts/1-initial-deploy.ps1` |
 | `backend/deployment/scripts/2-setup-stage.sh` | `backend/deployment/scripts/2-setup-stage.ps1` |
 | `backend/deployment/scripts/update-container.sh` | `backend/deployment/scripts/update-container.ps1` |

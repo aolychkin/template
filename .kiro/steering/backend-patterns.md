@@ -128,7 +128,7 @@ validateRequiredFields(fields)      // обязательные поля
 - JWT access (15 мин) + refresh (7 дней)
 - Bcrypt пароли (cost 12)
 - SHA256 refresh tokens
-- Account lockout (5 попыток, 15 мин)
+- Account lockout (5 попыток, 30 мин)
 
 ### Защита
 - Rate limiting
@@ -169,9 +169,10 @@ log.Error("failed to create user",
 ### Connection Pool (Serverless-optimized)
 ```go
 sqlDB, _ := db.DB()
-sqlDB.SetMaxOpenConns(10)       // Serverless-optimized
-sqlDB.SetMaxIdleConns(5)
-sqlDB.SetConnMaxLifetime(time.Hour)
+sqlDB.SetMaxOpenConns(25)                  // Serverless-optimized
+sqlDB.SetMaxIdleConns(10)
+sqlDB.SetConnMaxLifetime(5 * time.Minute)  // Короткий lifetime
+sqlDB.SetConnMaxIdleTime(10 * time.Minute)
 ```
 
 ## 🎯 Best Practices

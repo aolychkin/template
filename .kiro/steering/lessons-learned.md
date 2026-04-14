@@ -94,10 +94,10 @@ db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{
 })
 
 // Connection Pool для Serverless
-sqlDB.SetMaxOpenConns(10)                 // Мало! 10 контейнеров × 10 = 100 соединений
-sqlDB.SetMaxIdleConns(5)                  // Держим несколько готовых
-sqlDB.SetConnMaxLifetime(5 * time.Minute) // Короткий lifetime
-sqlDB.SetConnMaxIdleTime(1 * time.Minute) // Быстро закрываем idle
+sqlDB.SetMaxOpenConns(25)                  // Serverless-optimized
+sqlDB.SetMaxIdleConns(10)                  // Держим несколько готовых
+sqlDB.SetConnMaxLifetime(5 * time.Minute)  // Короткий lifetime
+sqlDB.SetConnMaxIdleTime(10 * time.Minute) // Быстро закрываем idle
 ```
 
 #### Frontend: Lazy Loading + Code Splitting
@@ -132,7 +132,7 @@ output: {
 
 ### Account Lockout
 - **Попытки:** 5
-- **Блокировка:** 15 минут (аккаунт целиком, не только логин)
+- **Блокировка:** 30 минут (аккаунт целиком, не только логин)
 
 ---
 
@@ -250,8 +250,8 @@ cd backend && task deploy
 <!-- TODO: Добавить ID секрета после создания -->
 - `DATABASE_URL` → production БД (sslmode=require)
 - `DATABASE_URL_LOCAL` → stage БД (sslmode=require)
-- `JWT_SECRET` — 64 байта
-- `ENCRYPTION_KEY` — 32 байта
+- `JWT_SECRET` — минимум 32 символа (рекомендуется `openssl rand -base64 32`)
+- `ENCRYPTION_KEY` — 32 байта (AES-256, `openssl rand -base64 32`)
 
 ### PostgreSQL пароли в YC (ВАЖНО!)
 При создании пользователя через `yc managed-postgresql user create`:
@@ -314,32 +314,20 @@ import { api } from '../../../shared/api/base-api';
 
 ### Proto stub файлы vs сгенерированные файлы (КРИТИЧНО!)
 
-**Проблема:** Backend использовал stub файлы из `internal/grpc/proto/` вместо сгенерированных из `internal/grpc/gen/`.
-
-**Симптомы:**
-- Логин/регистрация возвращают 0 bytes
-- Ошибка "Неверный логин или пароль" даже с правильными данными
-- gRPC запросы приходят, но данные не парсятся (email/password пустые)
-
-**Причина:** 
-1. Taskfile копирует в `internal/grpc/gen/`
-2. Но handlers импортировали из `internal/grpc/proto/` (stub файлы)
-
-**Решение:**
-1. Импорты должны быть из `internal/grpc/gen/`:
+**Правило:** Импорты ВСЕГДА из `internal/grpc/gen/`:
 ```go
-pb "template/internal/grpc/gen/auth"  // ✅ Правильно
-pb "template/internal/grpc/proto/auth"  // ❌ Неправильно (stub)
+pb "template/internal/grpc/gen/auth"  // ✅ Правильно (после переименования — ваш модуль вместо template)
 ```
 
-2. Удалить папку `internal/grpc/proto/` — она не нужна
+**Если proto не работают — перегенерировать:**
+```bash
+cd contract && task generate
+```
 
-3. После `cd contract && task generate` файлы автоматически копируются в `internal/grpc/gen/`
-
-**Признаки stub файлов:**
-- Комментарий `// STUB FILE` в начале
-- Нет `protoimpl.MessageState` в структурах
-- Нет `ProtoReflect()`, `ProtoMessage()` методов
+**Признаки проблемы:**
+- Логин/регистрация возвращают 0 bytes
+- gRPC запросы приходят, но данные не парсятся (email/password пустые)
+- Нет `protoimpl.MessageState` в структурах proto файлов
 
 ### gRPC пустой ответ (0 bytes)
 **Причины:**

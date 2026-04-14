@@ -222,7 +222,7 @@ cd frontend && yarn test --run src/shared/lib/architecture.test.ts
 
 **Библиотеки:**
 - Frontend: `fast-check`
-- Backend: `gopter`
+- Backend: `rapid` (pgregory.net/rapid)
 
 **Формат комментария:**
 ```typescript
