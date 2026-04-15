@@ -53,11 +53,16 @@ export const NewMethodResponse = proto.NewMethodResponse;
 
 ### 2. gRPC Client
 ```typescript
-// shared/lib/grpc-slice/grpc-client.ts
+// shared/lib/grpc/grpc-client.ts
+
+// Добавить в METHODS:
 const METHODS = { NEW_METHOD: 'NewMethod' };
-const ALLOWED_RESPONSE_CLASSES = new Set(['NewMethodResponse']);
-// В grpcClient:
-newMethod: createUserMethod(METHODS.NEW_METHOD, 'NewMethodResponse'),
+
+// Добавить в grpcClient:
+newMethod: async (request: NewMethodRequestType): Promise<NewMethodResponseType> => {
+  const ResponseClass = await getUserResponseClass<NewMethodResponseType>('NewMethodResponse');
+  return grpcCall(USER_SERVICE, METHODS.NEW_METHOD, request, ResponseClass);
+},
 ```
 
 ### 3. Публичный метод (без auth)
@@ -68,8 +73,10 @@ var publicMethods = map[string]bool{
 }
 ```
 ```typescript
-// Frontend: shared/lib/grpc-slice/grpc-client.ts (в grpcCall)
-const publicMethods = [METHODS.NEW_METHOD];
+// Frontend: shared/lib/grpc/grpc-client.ts
+const PUBLIC_METHODS: AllowedMethod[] = [
+  METHODS.NEW_METHOD,  // Добавить если публичный
+];
 ```
 
 **Полный чеклист:** `#grpc-workflow`
@@ -80,7 +87,7 @@ const publicMethods = [METHODS.NEW_METHOD];
 |---------|---------|
 | `failed to unmarshal` | **Stub файлы вместо сгенерированных proto!** |
 | Метод молча не работает | Забыл user_pb_wrapper.ts |
-| Error deserializing response | Забыл ALLOWED_RESPONSE_CLASSES |
+| Error deserializing response | Забыл добавить метод в `grpcClient` с `getXxxResponseClass` |
 | Unauthenticated 401 / 0 bytes | Забыл publicMethods (backend) |
 | Запросы висят | Нет timeout |
 | Import error | Прямой импорт _pb (нужен wrapper) |

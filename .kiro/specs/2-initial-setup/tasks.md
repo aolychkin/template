@@ -35,8 +35,8 @@
 - [ ] 1.8 В `.kiro/steering/structure.md`:
   - Заменить `[PROJECT_NAME]` в заголовке `# Project Structure - [PROJECT_NAME]` на реальное имя
 - [ ] 1.9 Обновить `backend/go.mod` — имя модуля `template` → новое имя. **ВАЖНО:** это потребует обновления ВСЕХ Go импортов (`template/internal/...` → `{новое-имя}/internal/...`) во всех `.go` файлах проекта (~20+ файлов)
-- [ ] 1.10 Обновить `go_package` в proto файлах (`contract/proto/*//*.proto`): `template/gen/go/...` → `{новое-имя}/gen/go/...`
-- [ ] 1.11 После обновления proto файлов — перегенерировать код: `cd contract && task generate` (скрипт генерации копирует файлы в `backend/internal/grpc/gen/`, путь `go_package` в proto влияет только на содержимое сгенерированных `.go` файлов, не на расположение)
+- [ ] 1.10 Обновить `go_package` в proto файлах (`contract/proto/*/*.proto`): `template/gen/go/...` → `{новое-имя}/gen/go/...`
+- [ ] 1.11 После обновления proto файлов — перегенерировать код: `cd contract && task generate`. **ВАЖНО:** без перегенерации сгенерированные Go файлы в `backend/internal/grpc/gen/` будут содержать старый пакет. Скрипт генерации копирует файлы в `backend/internal/grpc/gen/` — путь `go_package` в proto влияет на содержимое сгенерированных `.go` файлов, не на расположение.
 
 ### 2. Установка зависимостей
 

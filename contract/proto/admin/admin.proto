@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package admin;
 
+// ВАЖНО: go_package используется protoc для определения пакета внутри сгенерированных файлов.
+// Реальный путь размещения определяется --go_opt=paths=source_relative в contract/Taskfile.yml,
+// затем файлы копируются в backend/internal/grpc/gen/.
+// При переименовании модуля (спека 2, задача 1.10) обновите "template" на имя вашего модуля.
 option go_package = "template/gen/go/admin";
 
 // AdminService сервис административных функций

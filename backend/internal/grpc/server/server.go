@@ -2,6 +2,7 @@
 package server
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"net/http"
@@ -156,8 +157,13 @@ func (s *Server) GracefulStop() {
 	// Останавливаем gRPC
 	s.grpcServer.GracefulStop()
 
-	// Останавливаем HTTP если запущен
+	// Останавливаем HTTP если запущен (с таймаутом для graceful drain)
 	if s.httpServer != nil {
-		_ = s.httpServer.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := s.httpServer.Shutdown(ctx); err != nil {
+			s.log.Error("HTTP server shutdown error", "error", err)
+			_ = s.httpServer.Close()
+		}
 	}
 }

@@ -20,8 +20,8 @@ project/
 │   ├── install-tools.sh   # macOS/Linux
 │   └── install-tools.ps1  # Windows
 ├── .editorconfig        # Единообразие форматирования
-├── docker-compose.yml   # Локальная БД (только после спеки 3.2, не в git)
-├── Taskfile.yml         # Корневой таск-раннер (только после спеки 3.2, не в git)
+├── docker-compose.yml   # ⚠️ Создаётся спекой 3.2, не в git, НЕ существует до выполнения
+├── Taskfile.yml         # ⚠️ Создаётся спекой 3.2, не в git, НЕ существует до выполнения
 └── .kiro/
     ├── specs/           # Спецификации (1-environment-setup, 2-initial-setup, 3.1/3.2)
     ├── settings/        # Настройки окружения (environment.json, не в git)

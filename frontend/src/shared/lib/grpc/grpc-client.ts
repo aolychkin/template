@@ -21,6 +21,10 @@ import type {
   RefreshTokenResponse as RefreshTokenResponseType,
   LogoutRequest as LogoutRequestType,
   LogoutResponse as LogoutResponseType,
+  SaveProgressRequest as SaveProgressRequestType,
+  SaveProgressResponse as SaveProgressResponseType,
+  GetProgressRequest as GetProgressRequestType,
+  GetProgressResponse as GetProgressResponseType,
 } from 'shared/api/generated/auth/auth_pb.d';
 import type {
   GetProfileRequest as GetProfileRequestType,
@@ -55,6 +59,8 @@ const METHODS = {
   LOGIN: 'Login',
   LOGOUT: 'Logout',
   REFRESH_TOKEN: 'RefreshToken',
+  SAVE_REGISTRATION_PROGRESS: 'SaveRegistrationProgress',
+  GET_REGISTRATION_PROGRESS: 'GetRegistrationProgress',
   // User
   GET_PROFILE: 'GetProfile',
   UPDATE_PROFILE: 'UpdateProfile',
@@ -72,6 +78,8 @@ const PUBLIC_METHODS: AllowedMethod[] = [
   METHODS.LOGIN,
   METHODS.REGISTER,
   METHODS.REFRESH_TOKEN,
+  METHODS.SAVE_REGISTRATION_PROGRESS,
+  METHODS.GET_REGISTRATION_PROGRESS,
 ];
 
 // === GRPC FRAME UTILS ===
@@ -373,6 +381,14 @@ export const grpcClient = {
     refreshToken: async (request: RefreshTokenRequestType): Promise<RefreshTokenResponseType> => {
       const ResponseClass = await getAuthResponseClass<RefreshTokenResponseType>('RefreshTokenResponse');
       return grpcCall(AUTH_SERVICE, METHODS.REFRESH_TOKEN, request, ResponseClass);
+    },
+    saveRegistrationProgress: async (request: SaveProgressRequestType): Promise<SaveProgressResponseType> => {
+      const ResponseClass = await getAuthResponseClass<SaveProgressResponseType>('SaveProgressResponse');
+      return grpcCall(AUTH_SERVICE, METHODS.SAVE_REGISTRATION_PROGRESS, request, ResponseClass);
+    },
+    getRegistrationProgress: async (request: GetProgressRequestType): Promise<GetProgressResponseType> => {
+      const ResponseClass = await getAuthResponseClass<GetProgressResponseType>('GetProgressResponse');
+      return grpcCall(AUTH_SERVICE, METHODS.GET_REGISTRATION_PROGRESS, request, ResponseClass);
     },
   },
   user: {

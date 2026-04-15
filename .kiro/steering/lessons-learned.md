@@ -210,6 +210,8 @@ var publicMethods = map[string]bool{
     "/auth.AuthService/Login": true,
     "/auth.AuthService/Register": true,
     "/auth.AuthService/RefreshToken": true,
+    "/auth.AuthService/SaveRegistrationProgress": true,  // Multi-step регистрация
+    "/auth.AuthService/GetRegistrationProgress": true,   // Multi-step регистрация
     // GetProfile НЕТ - требует токен!
 }
 ```
@@ -277,7 +279,7 @@ cd backend && task deploy
 - `DATABASE_URL` → production БД (sslmode=require)
 - `DATABASE_URL_LOCAL` → stage БД (sslmode=require)
 - `JWT_SECRET` — минимум 32 символа (рекомендуется `openssl rand -base64 32`)
-- `ENCRYPTION_KEY` — 32 байта (AES-256, `openssl rand -base64 32`)
+- `ENCRYPTION_KEY` — 32 байта (AES-256, `openssl rand -base64 32`). **Примечание:** в текущей версии шаблона `ENCRYPTION_KEY` не используется в `config.go` — это заготовка для будущего шифрования данных (например, PII). Ключ хранится в Lockbox для готовности к использованию.
 
 ### PostgreSQL пароли в YC (ВАЖНО!)
 При создании пользователя через `yc managed-postgresql user create`:

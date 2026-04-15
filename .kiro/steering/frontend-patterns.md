@@ -193,15 +193,16 @@ const { data } = useGetItemsQuery(undefined, {
 ### gRPC Client Security
 ```typescript
 // ✅ Request timeout (защита от DoS)
-const REQUEST_TIMEOUT = 30000; // 30s
+const REQUEST_TIMEOUT = 8000; // 8s (см. architecture-invariants.md)
 const controller = new AbortController();
 const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
 // ✅ Generic error messages (не раскрывать детали)
 throw new Error('Invalid message format'); // НЕ: `Invalid length: ${length}`
 
-// ✅ Whitelist валидация
-const ALLOWED_RESPONSE_CLASSES = new Set(['AuthResponse', 'GetMeResponse']);
+// ✅ Whitelist валидация (сервисы и методы)
+const ALLOWED_SERVICES = new Set([AUTH_SERVICE, USER_SERVICE, ADMIN_SERVICE]);
+const ALLOWED_METHODS = new Set(Object.values(METHODS));
 
 // ✅ Условное логирование (только в development)
 if (config.enableDebugLogs) {
@@ -251,7 +252,7 @@ const ProfilePage = lazy(() => import('../pages/profile/ProfilePage'));
 5. **Try-catch** для внешних API (cookies, localStorage)
 6. **Валидация** user структуры перед использованием
 7. **Public API** через index.ts для чистых импортов
-8. **Request timeout** (30s) для защиты от DoS
+8. **Request timeout** (8s) для защиты от DoS
 9. **Generic error messages** - не раскрывать внутреннюю информацию
 10. **Условное логирование** - только в development
 

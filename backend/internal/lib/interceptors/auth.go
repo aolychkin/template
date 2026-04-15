@@ -15,9 +15,11 @@ import (
 // publicMethods - методы, не требующие аутентификации
 // CUSTOMIZE: Добавьте свои публичные методы
 var publicMethods = map[string]bool{
-	"/auth.AuthService/Register":     true,
-	"/auth.AuthService/Login":        true,
-	"/auth.AuthService/RefreshToken": true,
+	"/auth.AuthService/Register":                 true,
+	"/auth.AuthService/Login":                    true,
+	"/auth.AuthService/RefreshToken":             true,
+	"/auth.AuthService/SaveRegistrationProgress": true, // Multi-step регистрация (до авторизации)
+	"/auth.AuthService/GetRegistrationProgress":  true, // Multi-step регистрация (до авторизации)
 }
 
 // AuthInterceptor проверяет JWT токен и устанавливает userID в metadata

@@ -52,10 +52,12 @@
 
 ### 5. Taskfile совместимость (Windows)
 
-- [ ] 5.1 Добавить `migrate:win` в `backend/Taskfile.yml`
-- [ ] 5.2 Добавить `kill:win` в `backend/Taskfile.yml`
-- [ ] 5.3 Добавить `migrate:stage:win` в `backend/Taskfile.yml`
-- [ ] 5.4 Добавить `migrate:prod:win` в `backend/Taskfile.yml`
+> Эти задачи создаются ТОЛЬКО если ОС = Windows. Для macOS/Linux — пропустить.
+
+- [ ]* 5.1 Добавить `migrate:win` в `backend/Taskfile.yml`
+- [ ]* 5.2 Добавить `kill:win` в `backend/Taskfile.yml`
+- [ ]* 5.3 Добавить `migrate:stage:win` в `backend/Taskfile.yml`
+- [ ]* 5.4 Добавить `migrate:prod:win` в `backend/Taskfile.yml`
 
 ### 6. Проверка готовности
 

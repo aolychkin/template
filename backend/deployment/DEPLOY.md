@@ -48,7 +48,7 @@ chmod +x *.sh
 3. Добавь ключи (UPPERCASE!):
    - `DATABASE_URL` = `postgresql://user:PASSWORD@HOST:6432/dbname?sslmode=require`
    - `DATABASE_URL_LOCAL` = (для stage окружения)
-   - `JWT_SECRET` = (сгенерируй: `openssl rand -base64 64`)
+   - `JWT_SECRET` = (сгенерируй: `openssl rand -base64 32`)
    - `ENCRYPTION_KEY` = (сгенерируй: `openssl rand -base64 32`)
 
 ### Подключение секретов к контейнеру:

@@ -45,7 +45,7 @@ description: Yandex Cloud operations, resource IDs, and common YC CLI commands. 
 **Ключи:**
 - `DATABASE_URL` → production БД
 - `DATABASE_URL_LOCAL` → stage БД
-- `JWT_SECRET`, `ENCRYPTION_KEY`
+- `JWT_SECRET`, `ENCRYPTION_KEY` (заготовка для шифрования PII, пока не используется в config.go)
 - `SMTP_*` (email)
 
 

@@ -123,16 +123,16 @@ cache := make(map[string]*entry)  // без лимита!
 ---
 
 ### 7. Graceful Shutdown Order
-**RateLimiter.Stop() ПЕРЕД gRPC GracefulStop() ПЕРЕД HTTP Close().**
+**RateLimiter.Stop() ПЕРЕД gRPC GracefulStop() ПЕРЕД HTTP Shutdown().**
 
 ```go
 // ✅ Правильный порядок (см. server.go GracefulStop)
 rateLimiter.Stop()          // Background goroutines
 grpcServer.GracefulStop()   // Ждёт завершения текущих запросов
-httpServer.Close()          // Закрываем HTTP
+httpServer.Shutdown(ctx)    // Graceful drain с таймаутом (10s)
 ```
 
-**Почему:** gRPC GracefulStop ждёт завершения текущих запросов, rate limiter должен быть остановлен до этого.
+**Почему:** gRPC GracefulStop ждёт завершения текущих запросов, rate limiter должен быть остановлен до этого. `Shutdown(ctx)` (не `Close()`) даёт активным соединениям время завершиться.
 
 ---
 

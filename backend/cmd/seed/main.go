@@ -24,7 +24,11 @@ func main() {
 	// Проверяем окружение
 	env := os.Getenv("ENVIRONMENT")
 	if env == "production" {
-		log.Fatal("❌ Seed запрещён в production!")
+		// В production seed разрешён только через task seed:prod (с подтверждением)
+		// Проверяем что это осознанный запуск через переменную SEED_CONFIRMED
+		if os.Getenv("SEED_CONFIRMED") != "yes" {
+			log.Fatal("❌ Seed в production требует подтверждения! Используйте: task seed:prod")
+		}
 	}
 
 	// Загружаем конфиг

@@ -51,6 +51,31 @@ initial-setup (общая инициализация)
 | `backend/go.mod` | Имя модуля `template` → новое имя |
 | Все `*.go` файлы в `backend/` | Импорты `template/internal/...` → `{новое-имя}/internal/...` (~20+ файлов) |
 
+### Конкретные Go файлы с импортами `template/...`
+
+При переименовании модуля нужно обновить ВСЕ файлы, содержащие `"template/internal/...` или `"template/gen/...`. Основные:
+
+| Директория | Файлы |
+|-----------|-------|
+| `backend/cmd/server/` | `main.go` |
+| `backend/cmd/migrate/` | `main.go` |
+| `backend/cmd/seed/` | `main.go` |
+| `backend/internal/grpc/server/` | `server.go` |
+| `backend/internal/grpc/service/auth/` | `handler.go` |
+| `backend/internal/grpc/service/user/` | `handler.go` |
+| `backend/internal/grpc/service/admin/` | `handler.go` |
+| `backend/internal/services/service/auth/` | `auth.go` |
+| `backend/internal/services/service/user/` | `user.go` |
+| `backend/internal/services/service/admin/` | `admin.go` |
+| `backend/internal/storage/postgres/auth/` | `auth.go` |
+| `backend/internal/storage/postgres/user/` | `user.go` |
+| `backend/internal/storage/postgres/` | `connection.go` |
+| `backend/internal/seed/` | `seed.go`, `users.go`, `data.go` |
+| `backend/internal/lib/interceptors/` | `auth.go`, `correlation.go`, `ratelimit.go`, `timeout.go`, `validation.go` |
+| `backend/internal/lib/` | Все файлы с импортами из `template/...` |
+
+**Проверка полноты:** `grep -r '"template/' --include="*.go" backend/` — должно быть 0 совпадений после переименования.
+
 ## Correctness Properties
 
 ### Property 1: Полнота переименования
@@ -58,6 +83,11 @@ initial-setup (общая инициализация)
 
 ### Property 1b: Полнота переименования Go модуля
 *Для любого* `.go` файла в проекте, строка `"template/internal` НЕ должна присутствовать после переименования модуля.
+
+**Validates:** Requirements 1.1
+
+### Property 1c: Консистентность proto go_package
+*Для любого* `.proto` файла, `go_package` ДОЛЖЕН содержать новое имя модуля вместо `template`. После обновления `go_package` ОБЯЗАТЕЛЬНА перегенерация: `cd contract && task generate`. Без перегенерации сгенерированные Go файлы будут содержать старый пакет.
 
 **Validates:** Requirements 1.1
 

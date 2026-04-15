@@ -25,6 +25,8 @@ inclusion: always
 
 ## Commands
 
+### Всегда доступны (после спеки 2)
+
 ```bash
 # Установка инструментов (первый запуск)
 bash scripts/install-tools.sh        # macOS/Linux
@@ -38,15 +40,25 @@ cd frontend && task dev    # :3000
 
 # Backend
 cd backend && task dev     # :44044
+```
 
-# --- Локальная разработка (после спеки 3.2) ---
+### После спеки 3.2 (локальная разработка)
+
+> ⚠️ Эти команды НЕ работают до выполнения спеки 3.2 — она создаёт `docker-compose.yml`, корневой `Taskfile.yml` и `migrate:local` задачу.
+
+```bash
 task local:up              # запуск PostgreSQL
 task local:down            # остановка
 task local:reset           # пересоздание с нуля
 cd backend && task migrate:local   # миграции (из .env)
 cd backend && task seed            # тестовые данные
+```
 
-# --- YC окружение (после спеки 3.1) ---
+### После спеки 3.1 (YC окружение)
+
+> ⚠️ Эти команды НЕ работают до выполнения спеки 3.1 — требуют настроенный YC CLI и Lockbox.
+
+```bash
 cd backend && task migrate:stage   # stage через Lockbox
 cd backend && task migrate:prod    # production (ОСТОРОЖНО!)
 cd backend && task deploy          # деплой в YC
@@ -54,8 +66,6 @@ cd backend && task seed:stage      # seed stage через Lockbox
 cd backend && task seed:prod       # seed production (ОСТОРОЖНО!)
 ```
 
-> Команды из секции "Локальная разработка" доступны только после выполнения спеки 3.2
-> Команды из секции "YC окружение" доступны только после выполнения спеки 3.1
 > Для Windows: .sh скрипты имеют .ps1 аналоги рядом
 
 ## Critical Rules

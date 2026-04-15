@@ -10,11 +10,11 @@ description: Security guidelines and production checklist. Use when reviewing se
 
 ### 1. Секреты
 ```bash
-# Генерация JWT secret (64 байта)
-openssl rand -base64 64
+# Генерация JWT secret (минимум 32 байта, рекомендуется 32)
+openssl rand -base64 32
 
 # .env
-JWT_SECRET=<generated_64_bytes>
+JWT_SECRET=<generated_32_bytes>
 ENVIRONMENT=production
 ```
 
@@ -194,7 +194,7 @@ const updateProfile = async (data) => {
 ## 📝 Pre-Release Checklist
 
 ### 🔴 КРИТИЧНО - Секреты и окружение
-- [ ] JWT_SECRET - 64+ символов (сгенерировать новый для production)
+- [ ] JWT_SECRET - минимум 32 символа (сгенерировать: `openssl rand -base64 32`)
 - [ ] ENVIRONMENT=production
 - [ ] SSL connections для PostgreSQL (sslmode=require)
 

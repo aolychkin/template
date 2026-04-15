@@ -155,3 +155,4 @@ tasks:
         go run ./cmd/seed
     env:
       ENVIRONMENT: production
+      SEED_CONFIRMED: "yes"

@@ -136,7 +136,7 @@ const protoNamespace = { auth: {}, user: {}, admin: {}, newservice: {} };
 
 **Подробности о причинах и диагностике:** см. `#lessons-learned` → "Proto namespace в vite.config.ts"
 
-### 7️⃣ Frontend gRPC Client (4 шага)
+### 7️⃣ Frontend gRPC Client (3 шага)
 ```typescript
 // frontend/src/shared/lib/grpc/grpc-client.ts
 
@@ -146,25 +146,22 @@ const METHODS = {
   NEW_METHOD: 'NewMethod',  // Добавить
 } as const;
 
-// 2. Добавить Response класс в ALLOWED_RESPONSE_CLASSES
-const ALLOWED_RESPONSE_CLASSES = new Set([
-  // ...
-  'NewMethodResponse',  // Добавить
-]);
-
-// 3. Добавить метод в grpcClient
-export const grpcClient = {
-  user: {
-    // ...
-    newMethod: createUserMethod(METHODS.NEW_METHOD, 'NewMethodResponse'),
-  },
-};
-
-// 4. Если публичный - добавить в publicMethods (в grpcCall)
-const publicMethods: AllowedMethod[] = [
+// 2. Если публичный - добавить в PUBLIC_METHODS
+const PUBLIC_METHODS: AllowedMethod[] = [
   METHODS.LOGIN, 
   METHODS.NEW_METHOD,  // Добавить если публичный
 ];
+
+// 3. Добавить метод в grpcClient (с правильным getXxxResponseClass)
+export const grpcClient = {
+  user: {
+    // ...
+    newMethod: async (request: NewMethodRequestType): Promise<NewMethodResponseType> => {
+      const ResponseClass = await getUserResponseClass<NewMethodResponseType>('NewMethodResponse');
+      return grpcCall(USER_SERVICE, METHODS.NEW_METHOD, request, ResponseClass);
+    },
+  },
+};
 ```
 
 ### 8️⃣ Frontend RTK Query
@@ -342,9 +339,9 @@ message ListItemsResponse {
 
 1. **`failed to unmarshal`** → Stub файлы вместо сгенерированных proto!
 2. **Забыли user_pb_wrapper.ts** → Response класс не загружается, метод молча не работает
-3. **Забыли deserializer** → Error deserializing response
+3. **Забыли добавить метод в grpcClient** → Error deserializing response
 4. **Забыли publicMethods (backend)** → Unauthenticated 401, ответ 0 bytes
-5. **Забыли publicMethods (frontend)** → Попытка refresh токена для публичного метода
+5. **Забыли PUBLIC_METHODS (frontend)** → Попытка refresh токена для публичного метода
 6. **Не обновили интерфейс** → Compilation error
 7. **Нет context timeout** → Запросы висят
 8. **DELETE ALL + INSERT** → Потеря ID, неэффективность
@@ -356,8 +353,8 @@ message ListItemsResponse {
 - [ ] Backend компилируется и запускается
 - [ ] Frontend компилируется и запускается
 - [ ] **Proto wrapper обновлён** (user_pb_wrapper.ts)
-- [ ] Deserializer добавлен (ALLOWED_RESPONSE_CLASSES)
-- [ ] Auth обновлен (если нужно) - backend auth.go + frontend publicMethods
+- [ ] Метод добавлен в `grpcClient` с `getXxxResponseClass`
+- [ ] Auth обновлен (если нужно) - backend auth.go + frontend PUBLIC_METHODS
 - [ ] Метод работает через UI
 - [ ] Ошибки обрабатываются
 
@@ -376,9 +373,9 @@ message ListItemsResponse {
 ### Frontend
 - [ ] **Proto wrapper обновлён** (user_pb_wrapper.ts - проверка + экспорт)
 - [ ] Метод добавлен в `METHODS`
-- [ ] Response класс добавлен в `ALLOWED_RESPONSE_CLASSES`
-- [ ] Если публичный - добавлен в `publicMethods` (grpc-client.ts)
-- [ ] Request timeout (30s) работает автоматически
+- [ ] Метод добавлен в `grpcClient` с правильным `getXxxResponseClass`
+- [ ] Если публичный - добавлен в `PUBLIC_METHODS` (grpc-client.ts)
+- [ ] Request timeout (8s) работает автоматически
 - [ ] Generic error messages (не раскрывать детали)
 
 ### Backend
